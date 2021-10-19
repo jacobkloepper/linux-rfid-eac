@@ -3,10 +3,26 @@
 #include <semaphore.h>
 #include <pthread.h>
 
+/*
+    Imported identifiers:
+        #define _UID_LENGTH_ = 32 (in common.h)
+        #define NUM_PORTS
+        
+        typedef uint32_t uid;
+        typedef int PORT;
+
+        typedef struct {
+            int ACTIVE;
+            int KILLED_THREADS;
+        } STATES;
+
+        extern STATES STATE;
+*/
+
+
 #define OFILENAME "logs/test.csv"
 sem_t mutex;
 
-//#define _UID_LENGTH_ = 32 (in common.h)
 
 // read from ports, get uint uid val
 uid scan(int serial_port) {
@@ -29,19 +45,20 @@ uid scan(int serial_port) {
     }
     tcflush(serial_port, TCIFLUSH);
 
-    // Read from port
-    /*
-        The read() call takes a long time and seems to reset the Arduino firmware.
-        For debugging I have the arduino increment a binary counter on each read, but
-        while running this program the counter just pulses to one.
-        From the user end this is fine, I have a delay on the firmware anyways,
-        but I'm worried about something potentially sinister going on.
-    */
+    // Read 4 bytes from port
     uint8_t buf[4];
     int read_return = read(serial_port, &buf, 4); 
     if (read_return != 4) {
         // read failed, just go to next loop
         printf("read failed: read_return = %d\n", read_return);
+        printf("contents of buffer: \n[");
+        for (int i = 0; i < 4; i++) {
+            printf("%u", buf[i]);
+            if (i != 3) {
+                printf("-");
+            }
+        }
+        printf("]\n");
         //printf("Errno: %s\n", strerror(errno));
         return 0;
     }
@@ -55,7 +72,7 @@ uid scan(int serial_port) {
 // PORTS
 void setup_ports(PORT* ports) {
     ports[0] = open("/dev/ttyACM0", O_RDONLY); 
-    ports[1] = open("/dev/ttyACM1", O_RDONLY); 
+    //ports[1] = open("/dev/ttyACM1", O_RDONLY); 
 
     for (int i = 0; i < NUM_PORTS; i++) {
         if (ports[i] == -1) {
@@ -87,7 +104,7 @@ void* thread(void* arg) {
         KEY = 0;
         KEY = read_port(*(PORT*)arg);
 
-        // if key read, write (critical section)
+        // if key read, write (CRITICAL SECTION)
         if (KEY != 0) {
             // setup: get hexstr and open file
             uid_to_hexstring(KEY, KEYSTR);

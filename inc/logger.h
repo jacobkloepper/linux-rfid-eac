@@ -5,6 +5,6 @@ typedef unsigned int uid;
 
 void set_str_nak(char* cstr);
 int check_str_nak(char* cstr);
-char* map_uid_to_name(uid UID);
+void map_uid_to_name(uid UID, char* obuf);
 
 void update_log(uid UID);

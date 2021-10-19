@@ -1,6 +1,5 @@
-//#include "common.h"
+#include "common.h"
 #include "logger.h"
-#define WINDB 1
 
 /* Goal: Accept data in the form of a uid &? loc flag, map to user id and print to log.
  *
@@ -35,13 +34,13 @@ int check_str_nak(char* cstr) {
     }
 }
 
-char* map_uid_to_name(uid UID, char* obuf) {
-    char name[MAX_NAME_LENGTH] = {'\0'};
-    set_str_nak(name);
+// char* obuf is a char array of size MAX_NAME_LENGTH
+void map_uid_to_name(uid UID, char* obuf) {
 
 
-    
-    return name;
+    //if (failed) {
+    //    set_str_nak(name);
+    //} 
 }
 
 // this func is called from threads in portio and is mutexed.
@@ -56,13 +55,6 @@ void update_log(uid UID) {
 //
 //}
 
-void csv_writer(char* line, FILE** fp)
+void csv_writer(char* line, FILE** fp) {
 
-#ifdef WINDB
-#include <stdio.h>
-int main() {
-    puts("hello world");
-    return 0;
 }
-
-#endif

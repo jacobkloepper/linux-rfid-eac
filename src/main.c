@@ -1,12 +1,26 @@
-// GOAL: Go back to naive implementation, see what's up
-
 #include <stdio.h>
 #include "common.h"
 #include "portio.h"
 
-// MACRO
+/*
+    Imported identifiers:
+        #define NUM_PORTS
+
+        typedef int PORT;
+
+        typedef struct {
+            int ACTIVE;
+            int KILLED_THREADS;
+        } STATES;
+
+        extern STATES STATE;
+*/
+
+// DB MACRO
 #define DEBUG 1
 #define DBPRINT if(DEBUG)
+
+
 
 STATES STATE;
 
@@ -27,9 +41,7 @@ void setup_state() {
 } 
 
 int main() {
-    // the scan call opens and closes the provided port, returning the 
-    // read unique identifier (typedef uid := unsigned long)
-    PORT ports[2]; // intended implementation has 7
+    PORT ports[NUM_PORTS]; // intended implementation has 7
     setup_state();
     setup_ports(ports);
     
@@ -49,8 +61,8 @@ int main() {
     //  when hardcoded number of threads have died, close ports and end program.
     open_com(ports);
 
-    // main loop: wait until all threads are killed
-    while (STATE.KILLED_THREADS < 2); 
+    // main loop: stall until all threads are killed
+    while (STATE.KILLED_THREADS < NUM_PORTS); 
 
     close_ports(ports);
 
