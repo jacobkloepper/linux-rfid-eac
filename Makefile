@@ -4,7 +4,7 @@ LD_FLAGS = -pthread -lpthread
 
 TARGET_DIR = bin
 SOURCE_DIR = src
-BUILD_DIR = build
+BUILD_DIR = $(TARGET_DIR)/build
 
 TARGET = $(TARGET_DIR)/scanner
 SOURCES = $(wildcard $(SOURCE_DIR)/*.c) 
