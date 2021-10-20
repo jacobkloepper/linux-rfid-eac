@@ -5,13 +5,14 @@
  *
  */
 
-#define MAX_NAME_LENGTH 50
-#define MAX_USERFILE_LINE_LENGTH = 13 + MAX_NAME_LENGTH
-#define MAX_LOGFILE_LINE_LENGTH = 17 + MAX_NAME_LENGTH
+#define MAX_NAME_LENGTH (50)
+#define MAX_TIME_LENGTH (17)
+#define MAX_USERFILE_LINE_LENGTH = (10 + 1 + MAX_NAME_LENGTH + 1)
+#define MAX_LOGFILE_LINE_LENGTH = (MAX_TIME_LENGTH + 1 + MAX_NAME_LENGTH + 1)
 // The users.csv file is formatted:
 // 0xXXXXXXXX,NAME
-// max length is 10+1+MNL+1+1 
-// (uid + , + max name length + nl + null term)
+// max length is 10+1+MNL+1 
+// (uid + , + max name length + null term)
 
 // The log lines are formatted: 
 // DD/MM/YY|HH:MM:SS,NAME
@@ -46,6 +47,19 @@ void map_uid_to_name(uid UID, char* obuf) {
 
 // this func is called from threads in portio and is mutexed.
 void update_log(uid UID) {
+    char username[MAX_NAME_LENGTH];
+    char timebuf[MAX_TIME_LENGTH]; 
+    map_uid_to_name(UID, username);
+    str_time(timebuf);
+
+    // print to log
+    FILE* fout = fopen(LOGFILE, "a");
+
+    fprintf(fout, "%s,%s\n", timebuf, username);
+    DBPRINT printf("-PRINT: %s,%s\n", timebuf, username);
+
+    // resolution
+    fclose(fout);
 }
 
 // given a ref to a file pointer, return an array of strings, one for each line in the file.

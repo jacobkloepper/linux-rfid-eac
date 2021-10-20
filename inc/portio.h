@@ -8,5 +8,6 @@ uid read_port(PORT serial_port);
 // serial stuff
 void* thread(void* arg);
 
-// 'main'
+// com commands
 void open_com(PORT* ports);
+void close_com();

@@ -61,6 +61,7 @@ int main() {
 
     close_ports(ports);
     DBPRINT printf("UPDATE: closed all ports\n");
+    close_com();
 
     return 0;
 }

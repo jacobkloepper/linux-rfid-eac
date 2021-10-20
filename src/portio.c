@@ -1,5 +1,6 @@
 #include "common.h"
 #include "portio.h"
+#include "logger.h"
 #include <semaphore.h>
 #include <pthread.h>
 
@@ -110,19 +111,10 @@ void* thread(void* arg) {
         KEY = 0xFFFFFFFF;
         KEY = read_port(*(PORT*)arg);
 
-        // if key read, write (CRITICAL SECTION)
+        // if key read, write to log (CRITICAL SECTION)
         if (KEY != 0) {
-            // setup: get hexstr and open file
-            uid_to_hexstring(KEY, KEYSTR);
-            str_time(timebuf);
-            FILE* fout = fopen(LOGFILE, "a");
             sem_wait(&mutex);
-            
-            fprintf(fout, "%s,%s\n", timebuf, KEYSTR);
-            printf("-PRINT: %s,%s\n", timebuf, KEYSTR); // debug
-
-            // takedown: close file
-            fclose(fout);
+            update_log(KEY);
             sem_post(&mutex);
         }
     } 
@@ -145,6 +137,10 @@ void open_com(PORT* ports) {
         DBPRINT printf("-SPAWN: thread for port %d\n", i);
     }
 
+}
+
+void close_com() {
     // program gets here after SIGINT sent (therefore reads done)
+    DBPRINT printf("UPDATE: destroying mutex\n");
     sem_destroy(&mutex);
 }

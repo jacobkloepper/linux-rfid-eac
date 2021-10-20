@@ -4,6 +4,7 @@
 // ARGUMENTS
 #define NUM_PORTS (2)
 #define DEBUG (1)
+#define LOGFILE ("logs/test.csv")
 
 // INCLUDES
 #include <string.h>
@@ -23,7 +24,6 @@
 #define TRUE 1
 #define FALSE 0
 #define DBPRINT if(DEBUG)
-#define LOGFILE ("logs/test.csv")
 
 typedef uint32_t uid;
 typedef int PORT;

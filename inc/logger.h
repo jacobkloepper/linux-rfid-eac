@@ -1,7 +1,4 @@
-//#include "common.h"
-// debug on win10 host:
-typedef unsigned int uid;
-//
+#include "common.h"
 
 void set_str_nak(char* cstr);
 int check_str_nak(char* cstr);
