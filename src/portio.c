@@ -19,7 +19,6 @@
         extern STATES STATE;
 */
 
-#define OFILENAME "logs/test.csv"
 #define MAX_PORTS (7)
 sem_t mutex;
 
@@ -77,7 +76,7 @@ uid scan(int serial_port) {
 void setup_ports(PORT* ports) {
     for (int i = 0; i < NUM_PORTS; i++) {
         ports[i] = open(ALL_PORTS[i], O_RDONLY);
-        DBPRINT printf("OPEN: Port %d\n", i);
+        DBPRINT printf("--OPEN: Port %d\n", i);
 
         if (ports[i] == -1) {
             printf("\t!!!ERROR!!!: Port %d could not be opened.\n", i);
@@ -89,14 +88,14 @@ void setup_ports(PORT* ports) {
 void close_ports(PORT* ports) {
     for (int i = 0; i < NUM_PORTS; i++) {
         close(ports[i]);
-        DBPRINT printf("CLOSE: port %d\n", i);
+        DBPRINT printf("-CLOSE: port %d\n", i);
     }
 }
 
 uid read_port(PORT serial_port) {
-    DBPRINT printf("START: scanning serial %d\n", serial_port);
+    DBPRINT printf("-START: scanning serial %d\n", serial_port);
     uid KEY = scan(serial_port);
-    DBPRINT printf("READ: on port %d\n", serial_port);
+    DBPRINT printf("--READ: on port %d\n", serial_port);
     return KEY;
 }
 
@@ -116,11 +115,11 @@ void* thread(void* arg) {
             // setup: get hexstr and open file
             uid_to_hexstring(KEY, KEYSTR);
             str_time(timebuf);
-            FILE* fout = fopen(OFILENAME, "a");
+            FILE* fout = fopen(LOGFILE, "a");
             sem_wait(&mutex);
             
             fprintf(fout, "%s,%s\n", timebuf, KEYSTR);
-            printf("PRINT: %s,%s\n", timebuf, KEYSTR); // debug
+            printf("-PRINT: %s,%s\n", timebuf, KEYSTR); // debug
 
             // takedown: close file
             fclose(fout);
@@ -143,7 +142,7 @@ void open_com(PORT* ports) {
     // create threads to scan each port
     for (int i = 0; i < NUM_PORTS; i++) {
         pthread_create(&ALL_THREADS[i], NULL, thread, &ports[i]);
-        DBPRINT printf("SPAWN: thread for port %d\n", i);
+        DBPRINT printf("-SPAWN: thread for port %d\n", i);
     }
 
     // program gets here after SIGINT sent (therefore reads done)

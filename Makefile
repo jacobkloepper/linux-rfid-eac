@@ -6,15 +6,16 @@ TARGET_DIR = bin
 SOURCE_DIR = src
 BUILD_DIR = $(TARGET_DIR)/build
 INCLUDE_DIR = inc
+SCRIPT_DIR = scripts
 
 TARGET = $(TARGET_DIR)/scanner
 SOURCES = $(wildcard $(SOURCE_DIR)/*.c) 
 OBJECTS = $(subst $(SOURCE_DIR),$(BUILD_DIR),$(SOURCES:.c=.o))
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 
-.PHONY: all clean
+.PHONY: all run clean setup
 
-all: makedirs $(TARGET) run
+all: setup makedirs $(TARGET) run
 
 $(TARGET): $(OBJECTS)
 	@echo Linking $@
@@ -34,3 +35,7 @@ clean:
 	@echo Cleaning
 	@rm -f $(TARGET_DIR)/*
 	@rm -f $(BUILD_DIR)/*.o
+
+setup:
+	@echo "Configuring ports"
+	@sh $(SCRIPT_DIR)/setup.sh

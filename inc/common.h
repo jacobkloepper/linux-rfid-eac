@@ -1,6 +1,11 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+// ARGUMENTS
+#define NUM_PORTS (2)
+#define DEBUG (1)
+
+// INCLUDES
 #include <string.h>
 #include <stdio.h>
 #include <signal.h>
@@ -12,13 +17,13 @@
 #include <termios.h>
 #include <time.h>
 
+// STATIC DEFINES
 #define _UID_LENGTH_ 32
 #define HALFBYTE(val, n) ( ( val & ((0xF0000000) >> (4*n)) ) >> ( 32 - (4*(n+1)) ) )
 #define TRUE 1
 #define FALSE 0
-#define NUM_PORTS (2)
-#define DEBUG (1)
 #define DBPRINT if(DEBUG)
+#define LOGFILE ("logs/test.csv")
 
 typedef uint32_t uid;
 typedef int PORT;
