@@ -16,7 +16,9 @@
 #define HALFBYTE(val, n) ( ( val & ((0xF0000000) >> (4*n)) ) >> ( 32 - (4*(n+1)) ) )
 #define TRUE 1
 #define FALSE 0
-#define NUM_PORTS (1)
+#define NUM_PORTS (2)
+#define DEBUG (1)
+#define DBPRINT if(DEBUG)
 
 typedef uint32_t uid;
 typedef int PORT;

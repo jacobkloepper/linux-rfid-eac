@@ -19,39 +19,42 @@
         extern STATES STATE;
 */
 
-
 #define OFILENAME "logs/test.csv"
+#define MAX_PORTS (7)
 sem_t mutex;
 
+// dynamic assignments
+char ALL_PORTS[MAX_PORTS][15] = {"/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2"};
+pthread_t ALL_THREADS[NUM_PORTS] = {0};
 
 // read from ports, get uint uid val
 uid scan(int serial_port) {
     if (serial_port < 0) {
-        printf("Error %d opening %d\n", errno, serial_port);
-        //printf("Error %d from open\n", errno);
+        printf("\t!!!ERROR!!! %d opening %d\n", errno, serial_port);
     }
     
     // set up teletypewriter
     struct termios tty;
     if (tcgetattr(serial_port, &tty) != 0) {
-        printf("Error %d from tcgetattr on port %d\n", errno, serial_port);
+        printf("\t!!!ERROR!!! %d from tcgetattr on port %d\n", errno, serial_port);
     }
 
     tty.c_cc[VMIN] = _UID_LENGTH_; 
     cfsetispeed(&tty,B115200);
     
     if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
-        printf("Error %d from tcsetattr on port %d\n", errno, serial_port); 
+        printf("\t!!!ERROR!!! %d from tcsetattr on port %d\n", errno, serial_port); 
     }
     tcflush(serial_port, TCIFLUSH);
 
     // Read 4 bytes from port
     uint8_t buf[4];
     int read_return = read(serial_port, &buf, 4); 
-    if (read_return != 4) {
+
+    if (read_return < 4) {
         // read failed, just go to next loop
-        printf("read failed: read_return = %d\n", read_return);
-        printf("contents of buffer: \n[");
+        printf("\t!!!ERROR!!!: failed read -- got %d byte(s)\n", read_return);
+        printf("\tBUFFER DUMP: [");
         for (int i = 0; i < 4; i++) {
             printf("%u", buf[i]);
             if (i != 3) {
@@ -59,24 +62,25 @@ uid scan(int serial_port) {
             }
         }
         printf("]\n");
-        //printf("Errno: %s\n", strerror(errno));
         return 0;
     }
     
     // uid is 32 bits, the buffer elements are bytes indexed from MSB
+    // shift the bytes and OR to fill the 32 bit value.
     uid result = (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3] << 0);
 
     return result;
 }
 
+
 // PORTS
 void setup_ports(PORT* ports) {
-    ports[0] = open("/dev/ttyACM0", O_RDONLY); 
-    //ports[1] = open("/dev/ttyACM1", O_RDONLY); 
-
     for (int i = 0; i < NUM_PORTS; i++) {
+        ports[i] = open(ALL_PORTS[i], O_RDONLY);
+        DBPRINT printf("OPEN: Port %d\n", i);
+
         if (ports[i] == -1) {
-            printf("Error: port %d could not be opened.\n", i);
+            printf("\t!!!ERROR!!!: Port %d could not be opened.\n", i);
             exit(1);
         }
     }
@@ -85,11 +89,14 @@ void setup_ports(PORT* ports) {
 void close_ports(PORT* ports) {
     for (int i = 0; i < NUM_PORTS; i++) {
         close(ports[i]);
+        DBPRINT printf("CLOSE: port %d\n", i);
     }
 }
 
 uid read_port(PORT serial_port) {
+    DBPRINT printf("START: scanning serial %d\n", serial_port);
     uid KEY = scan(serial_port);
+    DBPRINT printf("READ: on port %d\n", serial_port);
     return KEY;
 }
 
@@ -101,7 +108,7 @@ void* thread(void* arg) {
 
     char KEYSTR[_UID_LENGTH_/4 + 3] = {'\0'};
     while (STATE.ACTIVE) {
-        KEY = 0;
+        KEY = 0xFFFFFFFF;
         KEY = read_port(*(PORT*)arg);
 
         // if key read, write (CRITICAL SECTION)
@@ -131,12 +138,13 @@ void* thread(void* arg) {
 // for now arg is unused.
 void open_com(PORT* ports) {
     // set up threading
-    pthread_t t_acm0, t_acm1;
     sem_init(&mutex, 0, 1);
 
     // create threads to scan each port
-    pthread_create(&t_acm0, NULL, thread, &ports[0]);
-    pthread_create(&t_acm1, NULL, thread, &ports[1]);
+    for (int i = 0; i < NUM_PORTS; i++) {
+        pthread_create(&ALL_THREADS[i], NULL, thread, &ports[i]);
+        DBPRINT printf("SPAWN: thread for port %d\n", i);
+    }
 
     // program gets here after SIGINT sent (therefore reads done)
     sem_destroy(&mutex);

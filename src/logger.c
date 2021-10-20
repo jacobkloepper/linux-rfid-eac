@@ -36,6 +36,7 @@ int check_str_nak(char* cstr) {
 
 // char* obuf is a char array of size MAX_NAME_LENGTH
 void map_uid_to_name(uid UID, char* obuf) {
+    
 
 
     //if (failed) {

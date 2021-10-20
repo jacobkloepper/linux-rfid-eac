@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "common.h"
 #include "portio.h"
 
@@ -17,30 +16,25 @@
 */
 
 // DB MACRO
-#define DEBUG 1
-#define DBPRINT if(DEBUG)
-
-
 
 STATES STATE;
 
 // Signal handlers
 // maybe in this handler fill all ports with zero-valued uids?
 static void SIGINT_HANDLER(int signum) {
-    DBPRINT write(STDOUT_FILENO, "SIGINT\n", 8); 
+    DBPRINT write(STDOUT_FILENO, "\tSIGINT\n", 8); 
     STATE.ACTIVE = 0;
     return;
 }
 
-//char* check_uid(char* uid) {
-//}
-
+// initial state: active and all threads alive
 void setup_state() {
     STATE.ACTIVE = 1;
     STATE.KILLED_THREADS = 0;
 } 
 
 int main() {
+    // setup ports
     PORT ports[NUM_PORTS]; // intended implementation has 7
     setup_state();
     setup_ports(ports);
@@ -51,7 +45,7 @@ int main() {
     sigemptyset(&sa.sa_mask);
 
     if (sigaction(SIGINT, &sa, NULL) == -1) {
-        puts("SIGINT handle not set.");
+        printf("\t!!!ERROR!!! SIGINT handle not set\n");
         return -1;
     }
 
@@ -63,8 +57,10 @@ int main() {
 
     // main loop: stall until all threads are killed
     while (STATE.KILLED_THREADS < NUM_PORTS); 
+    DBPRINT printf("UPDATE: all threads killed\n");
 
     close_ports(ports);
+    DBPRINT printf("UPDATE: closed all ports\n");
 
     return 0;
 }
