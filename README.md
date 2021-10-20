@@ -1,5 +1,13 @@
 # linux-rfid-eac
 Host controller for an RFID logging system. Log key-ins, collect logs on local device, and (WIP) upload logs to a remote, where logs can be formatted into a report.
+Intended to be used on a raspberry pi with arduinos connected via usb. 
+
+# Use
+Run by calling `make` on a linux machine with gcc and which supports threading. 
+
+The serial ports are configured by a script which assumes they take the name `/dev/ttyACMx` like usb-connected arduinos.
+
+If another, more attractive setup should become apparent, this interface is easy to edit.
 
 # Overview
 ## Data
@@ -23,3 +31,4 @@ TODO:
 * [logger](src/logger.c) handles local logging.
 
 * [uploader](src/uploader.c) (WIP) handles uploading logs to a remote.
+
