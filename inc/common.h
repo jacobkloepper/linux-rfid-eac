@@ -5,6 +5,7 @@
 #define NUM_PORTS (2)
 #define DEBUG (1)
 #define LOGFILE ("logs/test.csv")
+#define USERFILE ("data/users.csv")
 
 // INCLUDES
 #include <string.h>

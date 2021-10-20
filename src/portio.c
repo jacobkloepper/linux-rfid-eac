@@ -104,9 +104,7 @@ uid read_port(PORT serial_port) {
 void* thread(void* arg) {
     // get a uid
     uid KEY;
-    char timebuf[20];
 
-    char KEYSTR[_UID_LENGTH_/4 + 3] = {'\0'};
     while (STATE.ACTIVE) {
         KEY = 0xFFFFFFFF;
         KEY = read_port(*(PORT*)arg);

@@ -7,8 +7,8 @@
 
 #define MAX_NAME_LENGTH (50)
 #define MAX_TIME_LENGTH (17)
-#define MAX_USERFILE_LINE_LENGTH = (10 + 1 + MAX_NAME_LENGTH + 1)
-#define MAX_LOGFILE_LINE_LENGTH = (MAX_TIME_LENGTH + 1 + MAX_NAME_LENGTH + 1)
+#define MAX_USERFILE_LINE_LENGTH (10 + 1 + MAX_NAME_LENGTH + 1)
+#define MAX_LOGFILE_LINE_LENGTH (MAX_TIME_LENGTH + 1 + MAX_NAME_LENGTH + 1)
 // The users.csv file is formatted:
 // 0xXXXXXXXX,NAME
 // max length is 10+1+MNL+1 
@@ -26,23 +26,62 @@ void set_str_nak(char* cstr) {
 }
 
 // check error on string
-// returns 1 if nak (error)
+// returns 0 if nak (error)
 int check_str_nak(char* cstr) {
     if (cstr[0] == 21) {
-        return 1;
-    } else {
         return 0;
+    } else {
+        return 1;
+    }
+}
+
+// set the first \n to \0 in name string
+// purpose: remove nl on fgets string that is statically over-allocated.
+void set_nl_to_null(char* cstr) {
+    for (int i = 0; i < MAX_NAME_LENGTH; i++) {
+        if (cstr[i] == '\n') {
+            cstr[i] = '\0';
+            break;
+        }
     }
 }
 
 // char* obuf is a char array of size MAX_NAME_LENGTH
 void map_uid_to_name(uid UID, char* obuf) {
+    int SUCCEEDED = 0;
+
+    // Buffers for lines of userfile and UID token
+    char flinebuf[MAX_USERFILE_LINE_LENGTH];
+    char uidbuf[11];
     
+    // get uidstr from UID
+    char uidstr[11];
+    uid_to_hexstring(UID, uidstr);
+    DBPRINT printf("UPDATE: uidstr = %s\n", uidstr);
+    
+    // read from file, parse lines
+    FILE* fin = fopen(USERFILE, "r");
+    
+    // if first token matches uid, set obuf to second token.
+    while(fgets(flinebuf, MAX_USERFILE_LINE_LENGTH, fin) != NULL) {
+        strncpy(uidbuf, flinebuf, 10);
+        if (strcmp(uidbuf, uidstr) == 0) {
+            // this line matches, set output buffer to name
+            strncpy(obuf, flinebuf+11, MAX_NAME_LENGTH-1);
+            set_nl_to_null(obuf);
+            SUCCEEDED = 1;
+            break;
+        }
 
+        //DBPRINT printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
+    }
 
-    //if (failed) {
-    //    set_str_nak(name);
-    //} 
+    fclose(fin);
+
+    if (!SUCCEEDED) {
+        set_str_nak(obuf);
+        DBPRINT printf("UPDATE: failed to get username\n");
+    } 
 }
 
 // this func is called from threads in portio and is mutexed.
@@ -52,24 +91,14 @@ void update_log(uid UID) {
     map_uid_to_name(UID, username);
     str_time(timebuf);
 
-    // print to log
-    FILE* fout = fopen(LOGFILE, "a");
+    // print to log if valid username
+    if (check_str_nak(username)) {
+        FILE* fout = fopen(LOGFILE, "a");
 
-    fprintf(fout, "%s,%s\n", timebuf, username);
-    DBPRINT printf("-PRINT: %s,%s\n", timebuf, username);
+        fprintf(fout, "%s,%s\n", timebuf, username);
+        DBPRINT printf("-PRINT: %s,%s\n", timebuf, username);
 
-    // resolution
-    fclose(fout);
-}
-
-// given a ref to a file pointer, return an array of strings, one for each line in the file.
-// it is assumed the file is working.
-// NOTE: I don't need a full-blown csv api, I just need to give a uid and get a string.
-// NOTE: I can do a lighter implementation.
-//char** csv_reader(FILE** fp) {
-//
-//}
-
-void csv_writer(char* line, FILE** fp) {
-
+        // resolution
+        fclose(fout);
+    }
 }
