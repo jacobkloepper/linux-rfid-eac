@@ -94,9 +94,9 @@ void close_ports(PORT* ports) {
 }
 
 uid read_port(PORT serial_port) {
-    DBPRINT printf("-START: scanning serial %d\n", serial_port);
+    DBPRINTV printf("-START: scanning serial %d\n", serial_port);
     uid KEY = scan(serial_port);
-    DBPRINT printf("--READ: on port %d\n", serial_port);
+    DBPRINTV printf("--READ: on port %d\n", serial_port);
     return KEY;
 }
 

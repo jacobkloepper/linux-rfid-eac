@@ -3,7 +3,8 @@
 
 // ARGUMENTS
 #define NUM_PORTS (2)
-#define DEBUG (1)
+#define DEBUG (1 || DEBUGV)
+#define DEBUGV (1)
 #define LOGFILE ("logs/test.csv")
 #define USERFILE ("data/users.csv")
 
@@ -25,6 +26,7 @@
 #define TRUE 1
 #define FALSE 0
 #define DBPRINT if(DEBUG)
+#define DBPRINTV if (DEBUGV)
 
 typedef uint32_t uid;
 typedef int PORT;
