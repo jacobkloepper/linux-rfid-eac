@@ -5,7 +5,7 @@
 #define NUM_PORTS (2)
 #define DEBUG (0 || DEBUGV)
 #define DEBUGV (1)
-#define LOGFILE ("logs/test.csv")
+#define LOGFILE ("logs/log.csv")
 #define USERFILE ("data/users.csv")
 
 // INCLUDES
@@ -53,7 +53,7 @@ static inline void str_time(char* obuf) {
     time(&rawtime);
     info = localtime(&rawtime);
 
-    strftime(obuf, 20, "%x|%X", info);
+    strftime(obuf, 20, "%x,%X", info);
 
     return;
 }

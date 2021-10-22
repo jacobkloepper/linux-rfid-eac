@@ -6,7 +6,7 @@ TARGET_DIR = bin
 SOURCE_DIR = src
 BUILD_DIR = $(TARGET_DIR)/build
 INCLUDE_DIR = inc
-SCRIPT_DIR = tools
+SCRIPT_DIR = tool
 
 TARGET = $(TARGET_DIR)/linux-rfid-eac
 SOURCES = $(wildcard $(SOURCE_DIR)/*.c) 
