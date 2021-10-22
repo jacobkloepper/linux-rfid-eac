@@ -11,7 +11,7 @@
 //          physical wiring. walls are highly inconvenient. bit of a gordian knot in the ceiling where i want to be.
 //              
 // TODO:
-//      1. upload log files somewhere (google drive?)
+//      1. format logs to reports, upload logs
 //
 ////////////////////////////////////
 

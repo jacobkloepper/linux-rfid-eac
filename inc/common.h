@@ -4,7 +4,7 @@
 // ARGUMENTS
 #define NUM_PORTS (2)
 #define DEBUG (0 || DEBUGV)
-#define DEBUGV (1)
+#define DEBUGV (0)
 #define LOGFILE ("logs/log.csv")
 #define USERFILE ("data/users.csv")
 
