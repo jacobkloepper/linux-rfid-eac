@@ -6,14 +6,14 @@ TARGET_DIR = bin
 SOURCE_DIR = src
 BUILD_DIR = $(TARGET_DIR)/build
 INCLUDE_DIR = inc
-SCRIPT_DIR = scripts
+SCRIPT_DIR = tools
 
-TARGET = $(TARGET_DIR)/scanner
+TARGET = $(TARGET_DIR)/linux-rfid-eac
 SOURCES = $(wildcard $(SOURCE_DIR)/*.c) 
 OBJECTS = $(subst $(SOURCE_DIR),$(BUILD_DIR),$(SOURCES:.c=.o))
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 
-.PHONY: all run clean setup
+.PHONY: all run clean setup upload
 
 all: setup makedirs $(TARGET) run
 
@@ -39,3 +39,7 @@ clean:
 setup:
 	@echo "Configuring ports"
 	@sh $(SCRIPT_DIR)/setup.sh
+
+upload:
+	@echo "Uploading log"
+	@sh tool/uploader/run.sh

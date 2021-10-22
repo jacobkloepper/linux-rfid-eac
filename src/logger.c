@@ -84,7 +84,7 @@ void map_uid_to_name(uid UID, char* obuf) {
 
     if (!SUCCEEDED) {
         set_str_nak(obuf);
-        DBPRINT printf("\t!!!ERROR!!!: failed to get username\n");
+        DBPRINT printf("!ERROR: failed to get username\n");
     } 
 }
 

@@ -1,3 +1,20 @@
+/////////////////////////////////////
+//
+//  rfid-eac
+//      set up n serial ports to accept raw data in parallel.
+//      intended environment: 
+//          arduinos connected via usb to linux host
+//              realized as /dev/ttyACMx
+//          adafruit pn532 readers connected to the arduinos
+//              adafruit [] to multiplex the i2c comms from readers to one uC
+//      major issue:
+//          physical wiring. walls are highly inconvenient. bit of a gordian knot in the ceiling where i want to be.
+//              
+// TODO:
+//      1. upload log files somewhere (google drive?)
+//
+////////////////////////////////////
+
 #include "common.h"
 #include "portio.h"
 
@@ -45,7 +62,7 @@ int main() {
     sigemptyset(&sa.sa_mask);
 
     if (sigaction(SIGINT, &sa, NULL) == -1) {
-        printf("\t!!!ERROR!!! SIGINT handle not set\n");
+        printf("!ERROR: SIGINT handle not set\n");
         return -1;
     }
 

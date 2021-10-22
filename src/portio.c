@@ -30,20 +30,20 @@ pthread_t ALL_THREADS[NUM_PORTS] = {0};
 // read from ports, get uint uid val
 uid scan(int serial_port) {
     if (serial_port < 0) {
-        printf("\t!!!ERROR!!! %d opening %d\n", errno, serial_port);
+        printf("!ERROR: %d opening %d\n", errno, serial_port);
     }
     
     // set up teletypewriter
     struct termios tty;
     if (tcgetattr(serial_port, &tty) != 0) {
-        printf("\t!!!ERROR!!! %d from tcgetattr on port %d\n", errno, serial_port);
+        printf("!ERROR: %d from tcgetattr on port %d\n", errno, serial_port);
     }
 
     tty.c_cc[VMIN] = _UID_LENGTH_; 
     cfsetispeed(&tty,B115200);
     
     if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
-        printf("\t!!!ERROR!!! %d from tcsetattr on port %d\n", errno, serial_port); 
+        printf("!ERROR: %d from tcsetattr on port %d\n", errno, serial_port); 
     }
     tcflush(serial_port, TCIFLUSH);
 
@@ -53,7 +53,7 @@ uid scan(int serial_port) {
 
     if (read_return < 4) {
         // read failed, just go to next loop
-        printf("\t!!!ERROR!!!: failed read -- got %d byte(s)\n", read_return);
+        printf("!ERROR: failed read -- got %d byte(s)\n", read_return);
         printf("\tBUFFER DUMP: [");
         for (int i = 0; i < 4; i++) {
             printf("%u", buf[i]);
@@ -80,7 +80,7 @@ void setup_ports(PORT* ports) {
         DBPRINT printf("--OPEN: Port %d\n", i);
 
         if (ports[i] == -1) {
-            printf("\t!!!ERROR!!!: Port %d could not be opened.\n", i);
+            printf("!ERROR: Port %d could not be opened.\n", i);
             exit(1);
         }
     }
