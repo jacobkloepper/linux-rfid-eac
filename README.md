@@ -1,5 +1,5 @@
 # linux-rfid-eac
-Host controller for an RFID logging system. Log key-ins, collect logs on local device, and (WIP) upload logs to a remote, where logs can be formatted into a report.
+Host controller for an RFID logging system. Log key-ins, collect logs on local device, (WIP) format logs into a report, and upload logs and reports to a remote.
 Intended to be used on a raspberry pi with arduinos connected via usb. 
 
 # Use
@@ -14,14 +14,12 @@ If another, more attractive setup should become apparent, this interface is easy
 [`users.csv`](data/users.csv) pairs users to 4-byte RFID keys.
 
 TODO:
-1. Some sort of encryption?
-2. Integrate that python module to update the db simply.
+1. Integrate that python module to update the db simply.
 
 [`logs`](logs/) contains logs. Simple interface, append a new line to the current log.
 
 TODO:
 1. Some filesize protection. Create new log file when > X bytes.
-2. Some sort of time logging. Maybe append a "DD/MM/YYYY" line on midnight.
 
 ## Source
 * [main](src/main.c) sets up states and interrupt signal to safely exit main loop. Calls `open_com(PORT* ports)` which spawns threads to handle reads off terminals and mutex log writes.
@@ -30,5 +28,7 @@ TODO:
 
 * [logger](src/logger.c) handles local logging.
 
-* [uploader](src/uploader.c) (WIP) handles uploading logs to a remote.
+## Tools
+* [setup.sh](tool/setup.sh) configures the serial ports to accept raw input.
+* [uploader](tool/uploader/uploader.py) handles uploading logs to a google drive.
 
