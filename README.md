@@ -22,13 +22,13 @@ TODO:
 1. Some filesize protection. Create new log file when > X bytes.
 
 ## Source
-* [main](src/main.c) sets up states and interrupt signal to safely exit main loop. Calls `open_com(PORT* ports)` which spawns threads to handle reads off terminals and mutex log writes.
+* [`main`](src/main.c) sets up states and interrupt signal to safely exit main loop. Calls `open_com(PORT* ports)` which spawns threads to handle reads off terminals and mutex log writes.
 
-* [portio](src/portio.c) handles everything at the port end, such as setting up ttys, reading, error handling, and exiting.
+* [`portio`](src/portio.c) handles everything at the port end, such as setting up ttys, reading, error handling, and exiting.
 
-* [logger](src/logger.c) handles local logging.
+* [`logger`](src/logger.c) handles local logging.
 
 ## Tools
-* [setup.sh](tool/setup.sh) configures the serial ports to accept raw input.
-* [uploader](tool/uploader/uploader.py) handles uploading logs to a google drive.
+* [`setup.sh`](tool/setup.sh) configures the serial ports to accept raw input.
+* [`uploader`](tool/uploader/uploader.py) handles uploading logs to a google drive.
 
