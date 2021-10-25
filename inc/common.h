@@ -4,7 +4,7 @@
 // ARGUMENTS
 #define NUM_PORTS (2)
 #define DEBUG (0 || DEBUGV)
-#define DEBUGV (0)
+#define DEBUGV (1)
 #define LOGFILE ("logs/log.csv")
 #define USERFILE ("data/users.csv")
 
@@ -22,7 +22,7 @@
 
 // STATIC DEFINES
 #define _UID_LENGTH_ 32
-#define HALFBYTE(val, n) ( ( val & ((0xF0000000) >> (4*n)) ) >> ( 32 - (4*(n+1)) ) )
+#define HALFBYTE_32(val, n) ( ( val & ((0xF0000000) >> (4*n)) ) >> ( 32 - (4*(n+1)) ) ) // return the nth (n on [0,7]) halfbyte of 32-bit val
 #define TRUE 1
 #define FALSE 0
 #define DBPRINT if(DEBUG)
@@ -38,11 +38,11 @@ typedef struct {
 
 extern STATES STATE;
 
-// extract nth halfbyte from uid (zero indexed from most significant halfbyte)
+// fill a string buffer with the hexstring of a 32-bit uid.
 // hexstring have size _UID_LENGTH_/4 + 3 (with 4 byte uids, this is 11) 
 // to include "0x" prefix and null terminator
 static inline void uid_to_hexstring(uid val, char* buf) {
-    snprintf(buf, _UID_LENGTH_/4 + 3, "0x%x%x%x%x%x%x%x%x", HALFBYTE(val, 0), HALFBYTE(val, 1), HALFBYTE(val, 2), HALFBYTE(val, 3), HALFBYTE(val, 4), HALFBYTE(val, 5), HALFBYTE(val, 6), HALFBYTE(val, 7)); 
+    snprintf(buf, _UID_LENGTH_/4 + 3, "0x%x%x%x%x%x%x%x%x", HALFBYTE_32(val, 0), HALFBYTE_32(val, 1), HALFBYTE_32(val, 2), HALFBYTE_32(val, 3), HALFBYTE_32(val, 4), HALFBYTE_32(val, 5), HALFBYTE_32(val, 6), HALFBYTE_32(val, 7)); 
 }
 
 // print current time
