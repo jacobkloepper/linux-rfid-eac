@@ -6,10 +6,11 @@
 
 /*
     Imported identifiers:
-        #define _UID_LENGTH_ = 32 (in common.h)
+        #define UID_LENGTH = 56 
+        #define PAYLOAD_LENGTH = 8
         #define NUM_PORTS
         
-        typedef uint32_t uid;
+        typedef uint64_t uid;
         typedef int PORT;
 
         typedef struct {
@@ -28,7 +29,12 @@ char ALL_PORTS[MAX_PORTS][15] = {"/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2"}
 pthread_t ALL_THREADS[NUM_PORTS] = {0};
 
 // read from ports, get uint uid val
-uid scan(int serial_port) {
+payload scan(int serial_port) {
+    // initialize return value 
+    payload result;
+    result.UID = 0;
+    result.DIRECTION = 9;
+
     if (serial_port < 0) {
         printf("!ERROR: %d opening %d\n", errno, serial_port);
     }
@@ -39,7 +45,7 @@ uid scan(int serial_port) {
         printf("!ERROR: %d from tcgetattr on port %d\n", errno, serial_port);
     }
 
-    tty.c_cc[VMIN] = _UID_LENGTH_; 
+    tty.c_cc[VMIN] = UID_LENGTH; 
     cfsetispeed(&tty,B115200);
     
     if (tcsetattr(serial_port, TCSANOW, &tty) != 0) {
@@ -47,27 +53,49 @@ uid scan(int serial_port) {
     }
     tcflush(serial_port, TCIFLUSH);
 
-    // Read 4 bytes from port
-    uint8_t buf[4];
-    int read_return = read(serial_port, &buf, 4); 
+    // Read 8 bytes from port
+    uint8_t buf[PAYLOAD_LENGTH];
+    int read_return = read(serial_port, &buf, PAYLOAD_LENGTH); 
 
-    if (read_return < 4) {
+    if (read_return < PAYLOAD_LENGTH) {
         // read failed, just go to next loop
         printf("!ERROR: failed read -- got %d byte(s)\n", read_return);
         printf("\tBUFFER DUMP: [");
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < PAYLOAD_LENGTH; i++) {
             printf("%u", buf[i]);
             if (i != 3) {
                 printf("-");
             }
         }
         printf("]\n");
-        return 0;
+        return result;
+    }
+
+    // extract direction byte
+    switch (buf[PAYLOAD_LENGTH-1]) {
+        case 0xFF:
+            // entering
+            result.DIRECTION = 1;
+            DBPRINTV printf("UPDATE: set direction entering\n");
+            break;
+        case 0x88:
+            // exiting
+            result.DIRECTION = 0;
+            DBPRINTV printf("UPDATE: set direction exiting\n");
+            break;
+        default:
+            // error
+            DBPRINT printf("!ERROR: invalid direction byte: %u\n", buf[PAYLOAD_LENGTH-1]);
     }
     
-    // uid is 32 bits, the buffer elements are bytes indexed from MSB
-    // shift the bytes and OR to fill the 32 bit value.
-    uid result = (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3] << 0);
+    // uid is 56 bits, the buffer elements are bytes indexed from MSB
+    // shift the bytes and OR to fill the 56 bit value (NOTE: we IGNORE the last byte, which denotes direction (in/out).
+    result.UID = ((uint64_t)buf[0] << 56) | ((uint64_t)buf[1] << 48) | ((uint64_t)buf[2] << 40) | ((uint64_t)buf[3] << 32) | ((uint64_t)buf[4] << 24) | ((uint64_t)buf[5] << 16) | ((uint64_t)buf[6] << 8);
+    DBPRINTV {
+        char dbbuf[UID_LENGTH] = {0};
+        uid_to_hexstring(result.UID, dbbuf);
+        printf("UPDATE: read %s\n", dbbuf);
+    }
 
     return result;
 }
@@ -93,26 +121,25 @@ void close_ports(PORT* ports) {
     }
 }
 
-uid read_port(PORT serial_port) {
+payload read_port(PORT serial_port) {
     DBPRINTV printf("-START: scanning serial %d\n", serial_port);
-    uid KEY = scan(serial_port);
+    payload DATA = scan(serial_port);
     DBPRINTV printf("--READ: on port %d\n", serial_port);
-    return KEY;
+    return DATA;
 }
 
 // ASYNC
 void* thread(void* arg) {
-    // get a uid
-    uid KEY;
+    // get a payload
+    payload DATA;
 
     while (STATE.ACTIVE) {
-        KEY = 0xFFFFFFFF;
-        KEY = read_port(*(PORT*)arg);
+        DATA = read_port(*(PORT*)arg);
 
         // if key read, write to log (CRITICAL SECTION)
-        if (KEY != 0) {
+        if (DATA.UID != 0) {
             sem_wait(&mutex);
-            update_log(KEY);
+            update_log(DATA);
             sem_post(&mutex);
         }
     } 
