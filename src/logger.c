@@ -75,11 +75,11 @@ void map_uid_to_name(uid UID, char* obuf) {
             set_nl_to_null(obuf);
             SUCCEEDED = 1;
 
-            DBPRINTV printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
+            //DBPRINTV printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
             break;
         }
 
-        DBPRINTV printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
+        //DBPRINTV printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
     }
 
     fclose(fin);
