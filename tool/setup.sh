@@ -1,5 +1,6 @@
 # linux-rfid-eac setup
-#   sets up rfid reader terminals to send read raw
+#   sets up rfid reader terminals to read raw 
+#   (ie, do not convert incoming bytes into ascii chars).
 
 PORTS=`ls /dev/ttyACM*`
 

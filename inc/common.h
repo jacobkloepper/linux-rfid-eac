@@ -1,10 +1,13 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+// test to force make to rebuild
+//#define AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 0
+
 // ARGUMENTS
 #define NUM_PORTS (2)
 #define DEBUG (0 || DEBUGV)
-#define DEBUGV (0)
+#define DEBUGV (1)
 #define LOGFILE ("logs/log.csv")
 #define USERFILE ("data/users.csv")
 
@@ -21,28 +24,32 @@
 #include <time.h>
 
 // STATIC DEFINES
-#define _UID_LENGTH_ 32
-#define HALFBYTE(val, n) ( ( val & ((0xF0000000) >> (4*n)) ) >> ( 32 - (4*(n+1)) ) )
-#define TRUE 1
-#define FALSE 0
-#define DBPRINT if(DEBUG)
-#define DBPRINTV if (DEBUGV)
+#define UID_LENGTH (56)                                                                               // UID length in bits
+#define PAYLOAD_LENGTH (8)                                                                            // length of the data packet in bytes
+#define HALFBYTE_64(val, n) ( ( val & ((0xF000000000000000LL) >> (4*n)) ) >> ( 64 - (4*(n+1)) ) )     // return the nth (n on [0,7]) halfbyte of 32-bit val
+#define DBPRINT if(DEBUG)                                                                             // debug print macro
+#define DBPRINTV if (DEBUGV)                                                                          // verbose debug print macro
 
-typedef uint32_t uid;
+typedef uint64_t uid;
+typedef struct {
+    uid UID;
+    uint8_t DIRECTION;
+} payload;
+
 typedef int PORT;
 
+// program state struct
 typedef struct {
-    int ACTIVE; // 
-    int KILLED_THREADS;
+    int ACTIVE;              // thread loops run while ACTIVE is set
+    int KILLED_THREADS;      // tracks the number of pthreads killed; end main loop when all killed (KILLED_THREADS = NUM_PORTS)
 } STATES;
 
 extern STATES STATE;
 
-// extract nth halfbyte from uid (zero indexed from most significant halfbyte)
-// hexstring have size _UID_LENGTH_/4 + 3 (with 4 byte uids, this is 11) 
-// to include "0x" prefix and null terminator
+// fill a string buffer with the hexstring of a 56-bit uid.
+// hexstring have size UID_LENGTH/4 (bit -> hexbit) and +1 for '\0'.
 static inline void uid_to_hexstring(uid val, char* buf) {
-    snprintf(buf, _UID_LENGTH_/4 + 3, "0x%x%x%x%x%x%x%x%x", HALFBYTE(val, 0), HALFBYTE(val, 1), HALFBYTE(val, 2), HALFBYTE(val, 3), HALFBYTE(val, 4), HALFBYTE(val, 5), HALFBYTE(val, 6), HALFBYTE(val, 7)); 
+    snprintf(buf,UID_LENGTH/4+1,"%llx%llx%llx%llx%llx%llx%llx%llx%llx%llx%llx%llx%llx%llx",HALFBYTE_64(val,0),HALFBYTE_64(val,1),HALFBYTE_64(val,2),HALFBYTE_64(val,3),HALFBYTE_64(val,4),HALFBYTE_64(val,5),HALFBYTE_64(val,6),HALFBYTE_64(val,7),HALFBYTE_64(val,8),HALFBYTE_64(val,9),HALFBYTE_64(val,10),HALFBYTE_64(val,11),HALFBYTE_64(val,12),HALFBYTE_64(val,13));
 }
 
 // print current time

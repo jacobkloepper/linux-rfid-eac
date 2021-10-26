@@ -29,7 +29,7 @@
             int KILLED_THREADS;
         } STATES;
 
-        extern STATES STATE;
+        extern volatile STATES STATE;
 */
 
 // DB MACRO
@@ -51,8 +51,14 @@ void setup_state() {
 } 
 
 int main() {
+    // debug checking
+    DBPRINTV {
+        printf("VERBOSE DEBUG MODE\n");
+    } else DBPRINT {
+        printf("DEBUG MODE\n");
+    }
     // setup ports
-    PORT ports[NUM_PORTS]; // intended implementation has 7
+    PORT ports[NUM_PORTS]; // TODO: intended implementation has 7
     setup_state();
     setup_ports(ports);
     
