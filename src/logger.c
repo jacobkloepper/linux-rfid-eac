@@ -5,6 +5,7 @@
  *
  */
 
+#define HEXUID_LENGTH (15)
 #define MAX_NAME_LENGTH (50)
 #define MAX_TIME_LENGTH (17)
 #define MAX_DIR_LENGTH (4)
@@ -53,10 +54,10 @@ void map_uid_to_name(uid UID, char* obuf) {
 
     // Buffers for lines of userfile and UID token
     char flinebuf[MAX_USERFILE_LINE_LENGTH];
-    char uidbuf[11];
+    char uidbuf[HEXUID_LENGTH];
     
     // get uidstr from UID
-    char uidstr[11];
+    char uidstr[HEXUID_LENGTH];
     uid_to_hexstring(UID, uidstr);
     DBPRINTV printf("UPDATE: UID = %llu | uidstr = %s\n", UID, uidstr);
     
@@ -65,20 +66,20 @@ void map_uid_to_name(uid UID, char* obuf) {
     
     // if first token matches uid, set obuf to second token.
     while(fgets(flinebuf, MAX_USERFILE_LINE_LENGTH, fin) != NULL) {
-        strncpy(uidbuf, flinebuf, 10);
-        uidbuf[10] = '\0';
+        strncpy(uidbuf, flinebuf, HEXUID_LENGTH-1);
+        uidbuf[HEXUID_LENGTH-1] = '\0';
 
         if (strcmp(uidbuf, uidstr) == 0) {
             // this line matches, set output buffer to name
-            strncpy(obuf, flinebuf+11, MAX_NAME_LENGTH-1);
+            strncpy(obuf, flinebuf+HEXUID_LENGTH, MAX_NAME_LENGTH-1);
             set_nl_to_null(obuf);
             SUCCEEDED = 1;
 
-            //DBPRINTV printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
+            DBPRINTV printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
             break;
         }
 
-        //DBPRINTV printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
+        DBPRINTV printf("UPDATE: flinebuf = %s\tuidbuf = %s\n", flinebuf, uidbuf);
     }
 
     fclose(fin);

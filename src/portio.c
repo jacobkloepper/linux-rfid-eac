@@ -90,6 +90,7 @@ payload scan(int serial_port) {
     
     // uid is 56 bits, the buffer elements are bytes indexed from MSB
     // shift the bytes and OR to fill the 56 bit value (NOTE: we IGNORE the last byte, which denotes direction (in/out).
+    // note: buf[] is an array of uint8_t so we cast each element to uint64_t before lshifting. this is maybe not necessary but it removes a warning.
     result.UID = ((uint64_t)buf[0] << 56) | ((uint64_t)buf[1] << 48) | ((uint64_t)buf[2] << 40) | ((uint64_t)buf[3] << 32) | ((uint64_t)buf[4] << 24) | ((uint64_t)buf[5] << 16) | ((uint64_t)buf[6] << 8);
     DBPRINTV {
         char dbbuf[UID_LENGTH] = {0};
