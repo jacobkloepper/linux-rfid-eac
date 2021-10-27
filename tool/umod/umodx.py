@@ -33,7 +33,7 @@ def read_rfid():
         except ValueError:
             print("Format: Firstname Lastname")
             print("    eg. Kevin Bieksa")
-            print("        Alex Burrows")
+            print("    eg. Alex Burrows")
             print()
 
     print()

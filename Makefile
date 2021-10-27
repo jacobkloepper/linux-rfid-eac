@@ -44,6 +44,6 @@ upload:
 	@echo "Uploading log"
 	@sh tool/uploader/run.sh
 
-usermod:
+umod:
 	@echo "Starting usermod"
-	@sh tool/usermod/run.sh
+	@sh tool/umod/run.sh
