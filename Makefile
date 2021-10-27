@@ -13,7 +13,7 @@ SOURCES = $(wildcard $(SOURCE_DIR)/*.c)
 OBJECTS = $(subst $(SOURCE_DIR),$(BUILD_DIR),$(SOURCES:.c=.o))
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 
-.PHONY: all run clean setup upload
+.PHONY: all run clean setup upload usermod
 
 all: setup makedirs $(TARGET) run
 
@@ -43,3 +43,7 @@ setup:
 upload:
 	@echo "Uploading log"
 	@sh tool/uploader/run.sh
+
+usermod:
+	@echo "Starting usermod"
+	@sh tool/usermod/run.sh

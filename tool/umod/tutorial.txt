@@ -1,0 +1,53 @@
+###################################################################################
+# USERMOD TUTORIAL                                                                # 
+###################################################################################
+
+For some background, Epson VDC has a set of key-fobs for electronic access.   
+   These fobs hold a unique ID (UID) and a low-frequency antenna. These UIDs  
+   are read by the readers outside each door, and are used to physically      
+   unlock the doors. An auxiliary chip placed onto each fob contains a        
+   separate UID and a high-frequency antenna. These UIDs are used to track    
+   worker entrances and exits.                                                
+                                                                              
+   Because the two antennae are tuned to different frequencies, there is no   
+   intereference between the two. Essentially, there are two independent      
+   systems to accomplish two different goals, but relying on the same         
+   technology and contained within one physical package.                      
+                                                                              
+This tutorial is concerned only with the UIDs on the auxiliary chips, and     
+   therefore is concerned only with the worker in/out system.                 
+                                                                              
+The UIDs are seven bytes long. Each byte encodes two hexadecimal numbers      
+   (0-F) and therefore each UID can be represented as a string of             
+   fourteen characters, each being a number 0-9 or a letter A-F.              
+   For example, one such ID is "040f277aa17081".                              
+                                                                              
+The following set of paragraphs are only relevant if the system is changed    
+   and new RFID tags are bought.                                              
+                                                                              
+   The length of the UID is determined by the physical component chosen.      
+   Should this component change, the lower-level software can                 
+   accommodate a UID of a different length, but some precautions must         
+   be taken.                                                                  
+                                                                              
+   Most importantly is the chance of collisions. Comparing the total set of   
+   possible UIDs of two different lengths, there are pairs that "look"        
+   equal depending on the reading system. For a contrived example, consider   
+   three- and four-byte UIDs "1a3" and "1a32". If looking at the first three  
+   characters, they are the same. Further, we have "1a33," "1a34", and so on. 
+                                                                              
+   Note that, in general, the odds of collisions occuring at seven-byte       
+   resolutions are extremely low. However, RFID tag manufacturers order       
+   their tags in groups. For example, the string "7aa17081" is found in the   
+   latter half of three keys owned as of writing this.                        
+                                                                               
+   Essentially, simply check to make sure that nobody's UIDs are the same.    
+                                                                              
+   If manually entering UIDs, if the new UID is shorter than seven bytes,     
+   then the worker's ID must be right-padded with zeroes. For example,        
+   a four-byte UID would be entered as "a553c423000000".                      
+                                                                              
+The script called below, umodx.py, asks you to input a user's name followed   
+   by scanning their fob. The script will update the system's data file to    
+   pair the UID with the name.                                                
+                                                                              
