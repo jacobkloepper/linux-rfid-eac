@@ -26,7 +26,7 @@
 // STATIC DEFINES
 #define UID_LENGTH (56)                                                                               // UID length in bits
 #define PAYLOAD_LENGTH (8)                                                                            // length of the data packet in bytes
-#define HALFBYTE_64(val, n) ( ( val & ((0xF000000000000000LL) >> (4*n)) ) >> ( 64 - (4*(n+1)) ) )     // return the nth (n on [0,7]) halfbyte of 32-bit val
+#define HALFBYTE_64(val, n) ( ( val & ((0xF000000000000000LL) >> (4*n)) ) >> ( 64 - (4*(n+1)) ) )     // return the nth (n on [0,15]) halfbyte of 64-bit val
 #define DBPRINT if(DEBUG)                                                                             // debug print macro
 #define DBPRINTV if (DEBUGV)                                                                          // verbose debug print macro
 

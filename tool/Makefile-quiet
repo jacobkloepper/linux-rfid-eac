@@ -1,0 +1,40 @@
+CC = gcc
+CC_FLAGS = -Iinc -Wall -Wpedantic 
+LD_FLAGS = -pthread -lpthread
+
+TARGET_DIR = bin
+SOURCE_DIR = src
+BUILD_DIR = $(TARGET_DIR)/build
+INCLUDE_DIR = inc
+SCRIPT_DIR = tool
+
+TARGET = $(TARGET_DIR)/linux-rfid-eac
+SOURCES = $(wildcard $(SOURCE_DIR)/*.c) 
+OBJECTS = $(subst $(SOURCE_DIR),$(BUILD_DIR),$(SOURCES:.c=.o))
+HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
+
+.PHONY: all run clean setup upload
+
+all: setup makedirs $(TARGET) run
+
+$(TARGET): $(OBJECTS)
+	@$(CC) $(LD_FLAGS) $(OBJECTS) -o $(TARGET)
+
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c $(HEADERS)
+	@$(CC) -c $(CC_FLAGS) -o $@ $<
+
+makedirs:
+	@mkdir -p $(TARGET_DIR) $(SOURCE_DIR) $(BUILD_DIR)
+
+run:
+	@./$(TARGET)
+
+clean:
+	@rm -f $(TARGET_DIR)/*
+	@rm -f $(BUILD_DIR)/*.o
+
+setup:
+	@sh $(SCRIPT_DIR)/setup.sh
+
+upload:
+	@sh tool/uploader/run.sh

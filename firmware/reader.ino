@@ -3,7 +3,12 @@
      Downscaled to fit the needs of a simple RFID in/out logger
 
      TODO:
-      - Implement visual debugging (Blinking LEDs probably)
+      - Visual debugging (Blinking LEDs probably)
+      - Success/failure flags (flash green LED and buzz on success, flash red on failure)
+      - Schedule automatic log uploads (cron?)
+            - Or maybe just upload on every log change? 
+                 - do I need to worry about API calls? should be no more than 50 log-in/outs per day.
+      -  
 */
 /**************************************************************************/
 // Imports
@@ -51,7 +56,7 @@ void loop(void) {
 
     for (int i = 0; i < uidLength; i++) {
       // Write one byte of uid
-      // Because uid is zero-initialized, leading zeroes are in by default.
+      // Because uid is zero-initialized, leading zeroes of each byte are in by default.
       Serial.write(uid + (i * sizeof(uid[i])), 1);
     }
 
@@ -64,10 +69,9 @@ void loop(void) {
       Serial.write(0x88);
     }
 
-    // Get ready for next loop
-    //Serial.print('\n');
   }
 
+  // Get ready for next loop
   delay(500);
   Serial.flush();
 }
