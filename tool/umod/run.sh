@@ -2,4 +2,8 @@
 # ask for name input
 # scan or manually input UID
 
-python3 tool/umod/umodx.py
+cd tool/umod/
+
+python3 umodx.py
+
+cd ../..

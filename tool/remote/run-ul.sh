@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Need to run python script from its dir
-cd tool/uploader
+cd tool/remote
 
 python3 uploader.py
 

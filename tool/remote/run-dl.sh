@@ -3,7 +3,7 @@
 rm -f data/users.csv
 
 # Need to run python script from its dir
-cd tool/downloader
+cd tool/remote
 
 python3 downloader.py
 
