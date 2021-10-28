@@ -1,10 +1,6 @@
 #include "common.h"
 #include "logger.h"
 
-/* Goal: Accept data in the form of a uid &? loc flag, map to user id and print to log.
- *
- */
-
 #define HEXUID_LENGTH (15)
 #define MAX_NAME_LENGTH (50)
 #define MAX_TIME_LENGTH (17)
@@ -20,6 +16,8 @@
 // DD/MM/YY|HH:MM:SS,NAME,IN/OUT
 // max length is MTL+1+MNL+1+MDL+1
 // (date-time + , + max name length + , + max dir length + nullterm)
+
+
 
 // given a pointer to char array, set the first element
 // to NAK (ASCII 21) to denote an error occurred.
@@ -46,6 +44,23 @@ void set_nl_to_null(char* cstr) {
             break;
         }
     }
+}
+
+// run python script to download users.csv from google drive.
+// this func called when data/new is found to exist.
+// data/new is created whenever a new userfile is uploaded.
+// data/new is deleted at the end of this func.
+void update_userfile() {
+    DBPRINT printf("UPDATE: Downloading user file\n");
+    FILE* dl_p = popen("sh tool/remote/run-dl.sh", "r");
+    pclose(dl_p);
+
+    // delete new file
+    FILE* rm_p = popen("rm  data/new", "r");
+    pclose(rm_p);
+
+    // TODO: check conds on popen?
+
 }
 
 // char* obuf is a char array of size MAX_NAME_LENGTH

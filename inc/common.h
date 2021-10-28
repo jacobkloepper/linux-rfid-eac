@@ -22,6 +22,8 @@
 #include <unistd.h>
 #include <termios.h>
 #include <time.h>
+#include <semaphore.h>
+#include <pthread.h>
 
 // STATIC DEFINES
 #define UID_LENGTH (56)                                                                               // UID length in bits
@@ -30,6 +32,7 @@
 #define DBPRINT if(DEBUG)                                                                             // debug print macro
 #define DBPRINTV if (DEBUGV)                                                                          // verbose debug print macro
 
+// TYPEDEFS
 typedef uint64_t uid;
 typedef struct {
     uid UID;

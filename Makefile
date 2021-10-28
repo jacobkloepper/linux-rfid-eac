@@ -42,7 +42,7 @@ setup:
 
 upload:
 	@echo "Uploading log"
-	@sh tool/uploader/run.sh
+	@sh tool/remote/run-ul.sh
 
 umod:
 	@echo "Starting usermod"

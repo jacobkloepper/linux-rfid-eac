@@ -17,6 +17,7 @@
 
 #include "common.h"
 #include "portio.h"
+#include "logger.h"
 
 /*
     Imported identifiers:
@@ -57,6 +58,7 @@ int main() {
     } else DBPRINT {
         printf("DEBUG MODE\n");
     }
+
     // setup ports
     PORT ports[NUM_PORTS]; // TODO: intended implementation has 7
     setup_state();
