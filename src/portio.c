@@ -1,8 +1,6 @@
 #include "common.h"
 #include "portio.h"
 #include "logger.h"
-#include <semaphore.h>
-#include <pthread.h>
 
 /*
     Imported identifiers:
@@ -135,6 +133,17 @@ void* thread(void* arg) {
     payload DATA;
 
     while (STATE.ACTIVE) {
+        // check if new user file available
+        // TODO: dynamic
+        if (access("data/new", F_OK) == 0) {
+            DBPRINTV printf("UPDATE: new userfile available\n");
+            update_userfile();
+        } else {
+            DBPRINTV printf("UPDATE: new userfile unavailable\n");
+        }
+
+
+        // get payload
         DATA = read_port(*(PORT*)arg);
 
         // if key read, write to log (CRITICAL SECTION)

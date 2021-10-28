@@ -17,6 +17,7 @@
 
 #include "common.h"
 #include "portio.h"
+#include "logger.h"
 
 /*
     Imported identifiers:
@@ -57,6 +58,10 @@ int main() {
     } else DBPRINT {
         printf("DEBUG MODE\n");
     }
+
+    // setup sems
+    init_datamutex();
+
     // setup ports
     PORT ports[NUM_PORTS]; // TODO: intended implementation has 7
     setup_state();
@@ -85,6 +90,7 @@ int main() {
     close_ports(ports);
     DBPRINT printf("UPDATE: closed all ports\n");
     close_com();
+    close_datamutex();
 
     return 0;
 }

@@ -1,9 +1,7 @@
 #include "common.h"
 #include "logger.h"
 
-/* Goal: Accept data in the form of a uid &? loc flag, map to user id and print to log.
- *
- */
+sem_t datamutex;
 
 #define HEXUID_LENGTH (15)
 #define MAX_NAME_LENGTH (50)
@@ -20,6 +18,15 @@
 // DD/MM/YY|HH:MM:SS,NAME,IN/OUT
 // max length is MTL+1+MNL+1+MDL+1
 // (date-time + , + max name length + , + max dir length + nullterm)
+
+
+// init datamutex to be shared and binary
+void init_datamutex() {
+    sem_init(&datamutex, 0, 1);
+}
+void close_datamutex() {
+    sem_destroy(&datamutex);
+}
 
 // given a pointer to char array, set the first element
 // to NAK (ASCII 21) to denote an error occurred.
@@ -48,6 +55,28 @@ void set_nl_to_null(char* cstr) {
     }
 }
 
+// run python script to download users.csv from google drive.
+// this func called when data/new is found to exist.
+// data/new is created whenever a new userfile is uploaded.
+// data/new is deleted at the end of this func.
+void update_userfile() {
+    sem_wait(&datamutex);
+    DBPRINTV printf("UPDATE: In data lock\n");
+    DBPRINT printf("UPDATE: Downloading user file\n");
+    FILE* dl_p = popen("sh tool/downloader/run.sh", "r");
+    
+    sem_post(&datamutex);
+    DBPRINTV printf("UPDATE: Out data lock\n");
+    pclose(dl_p);
+
+    // delete new file
+    FILE* rm_p = popen("rm -f  data/new", "r");
+    pclose(rm_p);
+
+    // TODO: check conds on popen?
+
+}
+
 // char* obuf is a char array of size MAX_NAME_LENGTH
 void map_uid_to_name(uid UID, char* obuf) {
     int SUCCEEDED = 0;
@@ -62,6 +91,7 @@ void map_uid_to_name(uid UID, char* obuf) {
     DBPRINTV printf("UPDATE: UID = %llu | uidstr = %s\n", UID, uidstr);
     
     // read from file, parse lines
+    sem_wait(&datamutex);
     FILE* fin = fopen(USERFILE, "r");
     
     // if first token matches uid, set obuf to second token.
@@ -83,6 +113,7 @@ void map_uid_to_name(uid UID, char* obuf) {
     }
 
     fclose(fin);
+    sem_post(&datamutex);
 
     if (!SUCCEEDED) {
         set_str_nak(obuf);
