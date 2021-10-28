@@ -21,6 +21,7 @@
 
 #define MAX_PORTS (7)
 sem_t mutex;
+sem_t datamutex;
 
 // dynamic assignments
 char ALL_PORTS[MAX_PORTS][15] = {"/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2"};
@@ -133,23 +134,26 @@ void* thread(void* arg) {
     payload DATA;
 
     while (STATE.ACTIVE) {
+        // get payload
+        DATA = read_port(*(PORT*)arg);
+        
         // check if new user file available
-        // TODO: dynamic
+        // TODO: dynamic paths
+        sem_wait(&datamutex);
         if (access("data/new", F_OK) == 0) {
             DBPRINTV printf("UPDATE: new userfile available\n");
             update_userfile();
         } else {
             DBPRINTV printf("UPDATE: new userfile unavailable\n");
         }
-
-
-        // get payload
-        DATA = read_port(*(PORT*)arg);
+        sem_post(&datamutex);
 
         // if key read, write to log (CRITICAL SECTION)
         if (DATA.UID != 0) {
             sem_wait(&mutex);
+            sem_wait(&datamutex);
             update_log(DATA);
+            sem_post(&datamutex);
             sem_post(&mutex);
         }
     } 
@@ -165,6 +169,7 @@ void* thread(void* arg) {
 void open_com(PORT* ports) {
     // set up threading
     sem_init(&mutex, 0, 1);
+    sem_init(&datamutex, 1, 1);
 
     // create threads to scan each port
     for (int i = 0; i < NUM_PORTS; i++) {
@@ -178,4 +183,5 @@ void close_com() {
     // program gets here after SIGINT sent (therefore reads done)
     DBPRINT printf("UPDATE: destroying mutex\n");
     sem_destroy(&mutex);
+    sem_destroy(&datamutex);
 }
