@@ -36,11 +36,22 @@
 // DB MACRO
 
 STATES STATE;
+static PORT ports[NUM_PORTS]; // TODO: intended implementation has 7
 
 // Signal handlers
 // maybe in this handler fill all ports with zero-valued uids?
 static void SIGINT_HANDLER() {
     DBPRINT write(STDOUT_FILENO, "\tSIGINT\n", 8); 
+
+    // free all memory, close program
+    // bandaid fix 
+    close_ports(ports);
+    DBPRINT printf("UPDATE: closed all ports\n");
+    close_com();
+    DBPRINT printf("UPDATE: closed comms\n");
+    exit(0);
+    // end bandaid fix
+
     STATE.ACTIVE = 0;
     return;
 }
@@ -60,7 +71,6 @@ int main() {
     }
 
     // setup ports
-    PORT ports[NUM_PORTS]; // TODO: intended implementation has 7
     setup_state();
     setup_ports(ports);
     
