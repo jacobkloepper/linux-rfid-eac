@@ -136,7 +136,7 @@ void get_new_userfile() {
         DBPRINTV printf("UPDATE: new userfile available\n");
         update_userfile();
     } else {
-        DBPRINTV printf("UPDATE: new userfile unavailable\n");
+        //DBPRINTV printf("UPDATE: new userfile unavailable\n");
     }
     sem_post(&datamutex);
 }
