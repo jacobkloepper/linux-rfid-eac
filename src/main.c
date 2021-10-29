@@ -39,7 +39,7 @@ STATES STATE;
 
 // Signal handlers
 // maybe in this handler fill all ports with zero-valued uids?
-static void SIGINT_HANDLER(int signum) {
+static void SIGINT_HANDLER() {
     DBPRINT write(STDOUT_FILENO, "\tSIGINT\n", 8); 
     STATE.ACTIVE = 0;
     return;

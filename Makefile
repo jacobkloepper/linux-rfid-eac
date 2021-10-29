@@ -1,6 +1,6 @@
 CC = gcc
-CC_FLAGS = -Iinc -Wall -Wpedantic 
-LD_FLAGS = -pthread -lpthread
+CC_FLAGS = -Iinc -Wall -Wextra -Wpedantic 
+LD_FLAGS = -pthread 
 
 TARGET_DIR = bin
 SOURCE_DIR = src

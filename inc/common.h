@@ -1,9 +1,6 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-// test to force make to rebuild
-//#define AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 0
-
 // ARGUMENTS
 #define NUM_PORTS (2)
 #define DEBUG (0 || DEBUGV)
