@@ -3,8 +3,8 @@ import sys
 import subprocess
 from time import sleep
 
-DEBUG = False
-#DEBUG = True
+DATA_FOLDER_ID = '140syaUz8WLdJvehzuR38F8L2TSigQZBU'
+
 
 # First, remove any RFID tag near reader
 print("Remove RFID tags from reader\n")
@@ -48,15 +48,6 @@ print()
 reader.reset_input_buffer()
 reader.close()
 
-## Debug printout
-if (DEBUG):
-    print("User: {} {}".format(firstname, lastname))
-    print("  ID: ", end="")
-    for byte in byte_data:
-        print("%02x" % (byte), end="")
-    print()
-
-
 # Print to data file
 original_stdout = sys.stdout
 with open("../../data/users.csv", "a") as f:
@@ -99,7 +90,19 @@ drive = GoogleDrive(gauth)
 
 # upload into folder in google drive.
 # if creating a new drive or folder to upload to, need to get the new folder id as below.
-file = drive.CreateFile({'title':upload_name,'parents':[{'id': '140syaUz8WLdJvehzuR38F8L2TSigQZBU'}]})
+
+# Get the id of the users.csv in drive if exists
+update_id = None
+file_list = drive.ListFile({'q':"'140syaUz8WLdJvehzuR38F8L2TSigQZBU' in parents and trashed=False"}).GetList()
+for file_itr in file_list:
+    if file_itr['title'] == upload_name:
+        update_id = file_itr['id']
+
+# Second, upload the new users.csv to the old id or create if wasn't previously in drive
+if (update_id is not None):
+    file = drive.CreateFile({'id':update_id, 'parents':[{'id': '140syaUz8WLdJvehzuR38F8L2TSigQZBU' }]})
+else:
+    file = drive.CreateFile({'title':upload_name, 'parents':[{'id': '140syaUz8WLdJvehzuR38F8L2TSigQZBU' }]})
 file.SetContentFile(filepath)
 file.Upload()
 
