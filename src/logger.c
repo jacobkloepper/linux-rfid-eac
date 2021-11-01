@@ -135,5 +135,7 @@ void update_log(payload DATA) {
 
         // resolution
         fclose(fout);
+    } else {
+        DBPRINT printf("-ERROR: failed to set username\n");
     }
 }
