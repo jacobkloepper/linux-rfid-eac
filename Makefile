@@ -33,7 +33,7 @@ run:
 
 clean:
 	@echo Cleaning
-	@rm -f $(TARGET_DIR)/*
+	@rm -f $(TARGET)
 	@rm -f $(BUILD_DIR)/*.o
 
 setup:
