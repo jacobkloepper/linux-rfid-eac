@@ -29,6 +29,6 @@ Currently, upload logs to remote by calling `make upload`. This should be done a
 * [`logger.c`](src/logger.c) handles logging, including access of user file to pair users and UIDs.
 
 ## Tools
-* [`google`](tools/google/) contains google api auth used by following tools.
-* [`remote`](tools/remote/) contains scripts to upload logs and download user files from remote.
-* [`umod`](tools/umod/) contains a script to update the user file and upload it to remote.
+* [`google`](tool/google/) contains google api auth used by following tools.
+* [`remote`](tool/remote/) contains scripts to upload logs and download user files from remote.
+* [`umod`](tool/umod/) contains a script to update the user file and upload it to remote.
