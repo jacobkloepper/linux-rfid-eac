@@ -19,7 +19,7 @@ Holds [`users.csv`](data/users.csv) which pairs usernames to 7-byte UIDs.
 Also, contains a blank file `new` when a new user file is uploaded to remote. Once the file is downloaded, `new` is deleted.
 
 ## logs
-Contains [`log.csv`](logs/log.csv) which is updated on every key-in.
+Contains a log `.csv` which is updated on every key-in.
 
 Currently, upload logs to remote by calling `make upload`. This should be done after every key-in.
 
