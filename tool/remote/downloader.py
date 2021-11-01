@@ -10,16 +10,17 @@ from pydrive.drive import GoogleDrive
 filename = "users"
 filepath = "../../data/" + filename + ".csv"
 
+
 # Get/read auth
 gauth = GoogleAuth()
-gauth.LoadCredentialsFile("creds.txt")
+gauth.LoadCredentialsFile("../google/creds.txt")
 if gauth.credentials is None:
     gauth.LocalWebserverAuth()
 elif gauth.access_token_expired:
     gauth.Refresh()
 else:
     gauth.Authorize()
-gauth.SaveCredentialsFile("creds.txt")
+gauth.SaveCredentialsFile("../google/creds.txt")
 
 
 # download file

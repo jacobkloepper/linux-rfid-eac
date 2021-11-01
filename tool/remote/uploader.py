@@ -13,17 +13,16 @@ filepath = "../../logs/" + filename + ".csv"
 time_str = datetime.now().strftime("%Y-%m-%d--%H-%M-%S")
 upload_file = time_str + ".csv"
 
-
 # Get/read auth
 gauth = GoogleAuth()
-gauth.LoadCredentialsFile("creds.txt")
+gauth.LoadCredentialsFile("../google/creds.txt")
 if gauth.credentials is None:
     gauth.LocalWebserverAuth()
 elif gauth.access_token_expired:
     gauth.Refresh()
 else:
     gauth.Authorize()
-gauth.SaveCredentialsFile("creds.txt")
+gauth.SaveCredentialsFile("../google/creds.txt")
 
 
 # upload file
