@@ -72,7 +72,13 @@ int main() {
 
     // setup ports
     setup_state();
+    /* brief: set STATE.ACTIVE and reset STATE.KILLED_THREADS 
+    */
+
     setup_ports(ports);
+    /* brief: open() each string in ALL_PORTS (defined in portio.c) in read only.
+              if any open fails, report and exit(1)
+    */
     
     // Set interrupt signal object 
     struct sigaction sa;
@@ -89,6 +95,8 @@ int main() {
     //  when STATE.ACTIVE is turned off, each thread closes and increments STATE.KILLED_THREADS
     //  when hardcoded number of threads have died, close ports and end program.
     open_com(ports);
+    /* brief: spawn threads for each port. Each thread enters a loop while STATE.ACTIVE is set.
+    */
 
     // main loop: stall until all threads are killed
     while (STATE.KILLED_THREADS < NUM_PORTS); 
