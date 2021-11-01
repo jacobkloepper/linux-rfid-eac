@@ -60,7 +60,9 @@ static inline void str_time(char* obuf) {
     time(&rawtime);
     info = localtime(&rawtime);
 
-    strftime(obuf, 20, "%x,%X", info);
+    //strftime(obuf, 20, "%x,%X", info);
+    sprintf(obuf, "%02d/%02d/%02d,%02d:%02d:%02d", info->tm_mday, info->tm_mon+1, info->tm_year-100, info->tm_hour, info->tm_min, info->tm_sec);
+    //strptime(obuf, "%d/%m/%y,%T", info);
 
     return;
 }
