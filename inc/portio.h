@@ -1,3 +1,6 @@
+#ifndef __PORTIO_H__
+#define __PORTIO_H__
+
 #include "common.h"
 
 // port stuff
@@ -11,3 +14,5 @@ void* thread(void* arg);
 // com commands
 void open_com(PORT* ports);
 void close_com();
+
+#endif /* __PORTIO_H__ */
