@@ -47,3 +47,7 @@ upload:
 umod:
 	@echo "Starting usermod"
 	@sh tool/umod/run.sh
+
+report:
+	@echo "Uploading report"
+	@sh tool/remote/run-rp.sh
