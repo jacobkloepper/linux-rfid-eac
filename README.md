@@ -1,34 +1,34 @@
 # linux-rfid-eac
-Host controller for an RFID logging system. Log key-ins, collect logs on local device, (WIP) format logs into a report, and upload logs and reports to a remote.
-Intended to be used on a raspberry pi with arduinos connected via usb. 
+Host controller for an RFID logging system. Log key-ins, collect logs on local device and upload to a remote server, and manage user IDs on the same remote server.
+
+Intended to be run on a raspberry pi with arduinos connected via usb.
 
 # Use
-Run by calling `make` on a linux machine with gcc and which supports threading. 
+Host must be a linux machine with gcc.
+The serial ports are configued by a script assuming they take the name `/dev/ttyACMx` like usb-connected arduinos.
 
-The serial ports are configured by a script which assumes they take the name `/dev/ttyACMx` like usb-connected arduinos.
+If another, more attractive setup should become apparent, this interface should be easy to edit.
 
-If another, more attractive setup should become apparent, this interface is easy to edit.
+Build and run by calling `make` from project root.
 
 # Overview
-## Data
-[`users.csv`](data/users.csv) pairs users to 4-byte RFID keys.
 
-TODO:
-1. Integrate that python module to update the db simply.
+## data
+Holds [`users.csv`](data/users.csv) which pairs usernames to 7-byte UIDs.
 
-[`logs`](logs/) contains logs. Simple interface, append a new line to the current log.
+Also, contains a blank file `new` when a new user file is uploaded to remote. Once the file is downloaded, `new` is deleted.
 
-TODO:
-1. Some filesize protection. Create new log file when > X bytes.
+## logs
+Contains [`log.csv`](logs/log.csv) which is updated on every key-in.
 
-## Source
-* [`main`](src/main.c) sets up states and interrupt signal to safely exit main loop. Calls `open_com(PORT* ports)` which spawns threads to handle reads off terminals and mutex log writes.
+Currently, upload logs to remote by calling `make upload`. This should be done after every key-in.
 
-* [`portio`](src/portio.c) handles everything at the port end, such as setting up ttys, reading, error handling, and exiting.
-
-* [`logger`](src/logger.c) handles local logging.
+## src
+* [`main.c`](src/main.c) sets up states and signal handlers. Calles `open_com(ports)` which spawns threads to handle incoming data asynchronously.
+* [`portio.c`](src/portio.c) handles the ports, for example setting them up, reading, error handling, and closing.
+* [`logger.c`](src/logger.c) handles logging, including access of user file to pair users and UIDs.
 
 ## Tools
-* [`setup.sh`](tool/setup.sh) configures the serial ports to accept raw input.
-* [`uploader`](tool/uploader/uploader.py) handles uploading logs to a google drive.
-
+* [`google`](tools/google/) contains google api auth used by following tools.
+* [`remote`](tools/remote/) contains scripts to upload logs and download user files from remote.
+* [`umod`](tools/umod/) contains a script to update the user file and upload it to remote.
