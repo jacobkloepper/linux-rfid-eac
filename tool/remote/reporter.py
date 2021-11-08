@@ -53,6 +53,19 @@ drive = GoogleDrive(gauth)
 
 # Upload to remote
 upload_file = datestr
-file = drive.CreateFile({'title':upload_file,'parents':[{'id':'18mDYLQSFrF0SlVmw7o54BjxSQuFVy9Ya'}]})
+
+# Check drive if filename already exists. If it does, extract its id
+upload_id = None
+file_list = drive.ListFile({'q':"'18mDYLQSFrF0SlVmw7o54BjxSQuFVy9Ya' in parents and trashed=False"}).GetList()
+for file_itr in file_list:
+    if file_itr['title'] == upload_file:
+        upload_id = file_itr['id']
+
+# if file already in drive, reupload with new data. otherwise upload file
+if (upload_id is not None):
+    file = drive.CreateFile({'id':upload_id, 'parents':[{'id':'18mDYLQSFrF0SlVmw7o54BjxSQuFVy9Ya'}]})
+else:
+    file = drive.CreateFile({'title':upload_file, 'parents':[{'id':'18mDYLQSFrF0SlVmw7o54BjxSQuFVy9Ya'}]})
+
 file.SetContentFile("report.csv")
 file.Upload()

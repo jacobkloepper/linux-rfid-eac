@@ -1,4 +1,4 @@
-/////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //  rfid-eac
 //      set up n serial ports to accept raw data in parallel.
@@ -11,9 +11,10 @@
 //          physical wiring. walls are highly inconvenient. bit of a gordian knot in the ceiling where i want to be.
 //              
 // TODO:
-//      1. format logs to reports, upload logs
+//      1. gen/upload reports on each log update
+//          makes each key-in more time expensive, but with mutexing and buffering this should(hopefully?) be accounted.
 //
-////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
 #include "portio.h"

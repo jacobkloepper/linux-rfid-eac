@@ -65,6 +65,14 @@ void update_userfile() {
 
 }
 
+// run python script to generate and upload report to google drive.
+// func called on each log update.
+void update_report() {
+    DBPRINT printf("UPDATE: Uploading new report\n");
+    FILE* up_p = popen("sh tool/remote/run-rp.sh", "r");
+    pclose(up_p);
+}
+
 // char* obuf is a char array of size MAX_NAME_LENGTH
 void map_uid_to_name(uid UID, char* obuf) {
     int SUCCEEDED = 0;
@@ -220,4 +228,8 @@ void update_log(payload DATA) {
     } else {
         DBPRINT printf("-ERROR: failed to set username\n");
     }
+
+    // after printing to log, generate and upload new report
+    update_report();
+
 }

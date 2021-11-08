@@ -2,7 +2,7 @@
 #define __COMMON_H__
 
 // ARGUMENTS
-#define NUM_PORTS (1)
+#define NUM_PORTS (2)
 #define DEBUG (0 || DEBUGV)
 #define DEBUGV (1)
 #define LOGFILE ("logs/log.csv")
