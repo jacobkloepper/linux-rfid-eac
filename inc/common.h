@@ -2,7 +2,7 @@
 #define __COMMON_H__
 
 // ARGUMENTS
-#define NUM_PORTS (2)
+#define NUM_PORTS (1)
 #define DEBUG (0 || DEBUGV)
 #define DEBUGV (1)
 #define LOGFILE ("logs/log.csv")
@@ -21,6 +21,8 @@
 #include <time.h>
 #include <semaphore.h>
 #include <pthread.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 // STATIC DEFINES
 #define UID_LENGTH (56)                                                                               // UID length in bits
@@ -66,6 +68,21 @@ static inline void str_time(char* obuf) {
 
     return;
 }
+
+// check file size
+// taken from stackoverflow.com/questions/8236
+static inline off_t fsize(const char *filename) {
+    struct stat st;
+
+    if (stat(filename, &st) == 0) {
+        return st.st_size;
+    } 
+
+    printf("-ERROR: could not get size of \"%s\"\n", filename);
+    
+    return -1;
+}
+
 
 
 #endif /* __COMMON_H__ */

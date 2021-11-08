@@ -1,12 +1,14 @@
 #include "common.h"
 #include "logger.h"
 
+#define LOGDIR ("logs/")
 #define HEXUID_LENGTH (15)
 #define MAX_NAME_LENGTH (50)
 #define MAX_TIME_LENGTH (17)
 #define MAX_DIR_LENGTH (4)
 #define MAX_USERFILE_LINE_LENGTH (10 + 1 + MAX_NAME_LENGTH + 1)
 #define MAX_LOGFILE_LINE_LENGTH (MAX_TIME_LENGTH + 1 + MAX_NAME_LENGTH + 1 + MAX_DIR_LEGNTH + 1)
+#define MAX_FILESIZE_BYTES (10000000)
 // The users.csv file is formatted:
 // 0xXXXXXXXX,NAME
 // max length is 10+1+MNL+1 
@@ -117,8 +119,88 @@ void set_dir(uint8_t DIRECTION, char* obuf) {
     }
 }
 
+// copy file with path fn_in to fn_out
+void fcpy(const char* fn_in, const char* fn_out) {
+    FILE* fin = fopen(fn_in, "r");
+    FILE* fout = fopen(fn_out, "w");
+
+    if (fin == NULL) {
+        printf("-ERROR: Could not open input file [%s]\n", fn_in);
+        exit(1);
+    }
+    if (fout == NULL) {
+        fclose(fin);
+        printf("-ERROR: Could not open output file [%s]\n", fn_out);
+        exit(1);
+    }
+
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t nread;
+
+    while ((nread = getline(&line, &len, fin)) != -1) {
+        fwrite(line, nread, 1, fout);
+    }
+
+    free(line);
+
+    fclose(fin);
+    fclose(fout);
+}
+
+// clear a file with name fn
+void fclear(const char* fn) {
+    FILE* fp = fopen(fn, "w");
+    if (fp == NULL) {
+        printf("-ERROR: could not open file to clear\n");
+        exit(1);
+    }
+    fclose(fp);
+}
+
+// get number from cache, update cache (+1)
+unsigned int get_lognum() {
+    unsigned int lognum = 0;
+
+    const char* fn_cache = "logs/cache.txt";
+    FILE* fcache = fopen(fn_cache, "r");
+    if (fcache == NULL) {
+        printf("-ERROR: Could not open cache for reads\n");
+        // TODO: do some handling instead of crashing
+        exit(1);
+    }
+    fscanf(fcache, "%u", &lognum);
+    freopen(fn_cache, "w", fcache);
+    if (fcache == NULL) {
+        printf("-ERROR: Could not open cache for writes\n");
+        // TODO: do some handling instead of crashing
+        exit(1);
+    }
+    fprintf(fcache, "%u", lognum+1);
+    fclose(fcache);
+
+    return lognum;
+}
+
+void buffer_log() {
+    char buf_fn[50];
+
+    snprintf(buf_fn, 49, "%s%u_%s", LOGDIR, get_lognum(), "log.csv");
+
+    fcpy(LOGFILE, buf_fn);
+    fclear(LOGFILE);
+}
+
 // this func is called from threads in portio and is mutexed.
 void update_log(payload DATA) {
+    // first, check log size
+    // if above 10MB, buffer log and create new one
+    if (fsize(LOGFILE) > MAX_FILESIZE_BYTES) {
+        printf("UPDATE: buffering log\n");
+        buffer_log();
+    }
+    
+    // get elements of log line
     char username[MAX_NAME_LENGTH];
     char timebuf[MAX_TIME_LENGTH]; 
     char dirbuf[MAX_DIR_LENGTH];
