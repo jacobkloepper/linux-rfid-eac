@@ -68,9 +68,16 @@ void update_userfile() {
 // run python script to generate and upload report to google drive.
 // func called on each log update.
 void update_report() {
+    pthread_t th;
+    pthread_create(&th, NULL, rp_thread, NULL);
+}
+
+void* rp_thread() {
     DBPRINT printf("UPDATE: Uploading new report\n");
     FILE* up_p = popen("sh tool/remote/run-rp.sh", "r");
     pclose(up_p);
+    DBPRINT printf("UPDATE: Uploaded new report\n");
+    return NULL;
 }
 
 // char* obuf is a char array of size MAX_NAME_LENGTH

@@ -8,6 +8,7 @@ int check_str_nak(char* cstr);
 void map_uid_to_name(uid UID, char* obuf);
 void update_userfile();
 void update_report();
+void* rp_thread();
 
 
 void fcpy(const char* fin, const char* fout);
