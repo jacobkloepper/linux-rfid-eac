@@ -5,14 +5,16 @@ from datetime import date
 
 ## NOTE: 
 ##   Only considers one in/out pair.
-##   As it stands, will report the last "in" and last "out" in a day
+##   As it stands, will report the first "in" and last "out" in a day
 
 # Create report file
 today = date.today()
 datestr = today.strftime("%d/%m/%y")
 
-report_dict = dict() 
-
+# fills the lines of the output .csv. key = name, val = [in_time, out_time]
+report_dict = dict()
+# checks off a user's first "in" entry. key = name, val = True/False
+check_dict = dict()
 
 with open("../../logs/log.csv", "r", newline='') as f:
     fh = csv.reader(f, delimiter=",")
@@ -22,12 +24,15 @@ with open("../../logs/log.csv", "r", newline='') as f:
             #   row[0]: dd/mm/yy 
             #   row[1]: hh/mm/ss
             #   row[2]: Firstname Lastname
-            #   row[3]: in OR out
+            #   row[3]: in || out
             if (row[2] not in report_dict):
                 report_dict[row[2]] = [None]*2
+                check_dict[row[2]] = False
 
             if (row[3] == "in"):
-                report_dict[row[2]][0] = row[1]
+                if (check_dict[row[2]] == False):
+                    check_dict[row[2]] = True
+                    report_dict[row[2]][0] = row[1]
             elif (row[3] == "out"):
                 report_dict[row[2]][1] = row[1]
 
