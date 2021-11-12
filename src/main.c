@@ -10,10 +10,6 @@
 //      major issue:
 //          physical wiring. walls are highly inconvenient. bit of a gordian knot in the ceiling where i want to be.
 //              
-// TODO:
-//      1. gen/upload reports on each log update
-//          makes each key-in more time expensive, but with mutexing and buffering this should(hopefully?) be accounted.
-//
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "common.h"
@@ -37,10 +33,10 @@
 // DB MACRO
 
 STATES STATE;
-static PORT ports[NUM_PORTS]; // TODO: intended implementation has 7
+static PORT ports[NUM_PORTS];
 
 // Signal handlers
-// maybe in this handler fill all ports with zero-valued uids?
+//      just runs closing functions
 static void SIGINT_HANDLER() {
     DBPRINT write(STDOUT_FILENO, "\tSIGINT\n", 8); 
 
@@ -71,15 +67,14 @@ int main() {
         printf("DEBUG MODE\n");
     }
 
-    // setup ports
-    setup_state();
     /* brief: set STATE.ACTIVE and reset STATE.KILLED_THREADS 
     */
+    setup_state();
 
-    setup_ports(ports);
     /* brief: open() each string in ALL_PORTS (defined in portio.c) in read only.
               if any open fails, report and exit(1)
     */
+    setup_ports(ports);
     
     // Set interrupt signal object 
     struct sigaction sa;
@@ -91,15 +86,15 @@ int main() {
         return -1;
     }
 
-    // open comms
-    // creates N threads to handle N readers, each is looped on STATE.ACTIVE
-    //  when STATE.ACTIVE is turned off, each thread closes and increments STATE.KILLED_THREADS
-    //  when hardcoded number of threads have died, close ports and end program.
-    open_com(ports);
     /* brief: spawn threads for each port. Each thread enters a loop while STATE.ACTIVE is set.
+              when the threads close (they're never supposed to outside of SIGINT), increment
+              STATE.KILLED_THREADS. This value will break the loop in main, ending the program.
     */
+    open_com(ports);
 
     // main loop: stall until all threads are killed
+    // this loop shouldn't ever be broken, but handling is in place.
+    // program can otherwise be broken by sending an interrupt signal (ctrl+C)
     while (STATE.KILLED_THREADS < NUM_PORTS); 
     DBPRINT printf("UPDATE: all threads killed\n");
 
