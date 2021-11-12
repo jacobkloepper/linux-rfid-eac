@@ -68,8 +68,12 @@ void update_userfile() {
 // run python script to generate and upload report to google drive.
 // func called on each log update.
 void update_report() {
-    pthread_t th;
-    pthread_create(&th, NULL, rp_thread, NULL);
+    if (DBREPORT) {
+        pthread_t th;
+        pthread_create(&th, NULL, rp_thread, NULL);
+    } else {
+        printf("UPDATE: Skipping report upload\n");
+    }
 }
 
 void* rp_thread() {

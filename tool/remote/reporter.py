@@ -16,10 +16,36 @@ report_dict = dict()
 # checks off a user's first "in" entry. key = name, val = True/False
 check_dict = dict()
 
+# get the cached file line number
+line_offset = 0
+with open("cache", "r") as f:
+    line_offset = int(f.read())
+if (line_offset > 3):
+    line_offset = line_offset - 3
+
+# cache update flag
+cache_updated = False
+
 with open("../../logs/log.csv", "r", newline='') as f:
+    # skip cached lines according to cached offset
+    cache_line_no = 0
+    for _ in range(line_offset):
+        cache_line_no += 1
+        next(f)
+
     fh = csv.reader(f, delimiter=",")
     for row in fh:
+        # continue updating line no for caching until hit
+        if (not cache_updated):
+            cache_line_no += 1
+            
         if (row[0] == datestr):
+            if (not cache_updated):
+                with open("cache", "w") as cache_f:
+                    if (cache_line_no > 1):
+                        cache_line_no -= 1
+                    cache_f.write(str(cache_line_no))
+                cache_updated = True
             # row:
             #   row[0]: dd/mm/yy 
             #   row[1]: hh/mm/ss
@@ -62,6 +88,7 @@ upload_file = datestr
 # Check drive if filename already exists. If it does, extract its id
 upload_id = None
 file_list = drive.ListFile({'q':"'18mDYLQSFrF0SlVmw7o54BjxSQuFVy9Ya' in parents and trashed=False"}).GetList()
+# get all copies of day's report
 for file_itr in file_list:
     if file_itr['title'] == upload_file:
         upload_id = file_itr['id']

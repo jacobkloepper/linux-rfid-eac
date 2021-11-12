@@ -5,6 +5,7 @@
 #define NUM_PORTS (2)
 #define DEBUG (0 || DEBUGV)
 #define DEBUGV (1)
+#define DBREPORT (1)
 #define LOGFILE ("logs/log.csv")
 #define USERFILE ("data/users.csv")
 
