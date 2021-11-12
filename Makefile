@@ -13,7 +13,7 @@ SOURCES = $(wildcard $(SOURCE_DIR)/*.c)
 OBJECTS = $(subst $(SOURCE_DIR),$(BUILD_DIR),$(SOURCES:.c=.o))
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 
-.PHONY: all run clean setup umod
+.PHONY: all run clean setup upload umod report
 
 all: setup makedirs $(TARGET) run
 
@@ -38,8 +38,16 @@ clean:
 
 setup:
 	@echo "Configuring ports"
-	@sh $(SCRIPT_DIR)/setup.sh
+	@sh $(SCRIPT_DIR)/sys/setup.sh
+
+upload:
+	@echo "Uploading log"
+	@sh $(SCRIPT_DIR)/remote/run-ul.sh
 
 umod:
 	@echo "Starting usermod"
-	@sh tool/umod/run.sh
+	@sh $(SCRIPT_DIR)/umod/run.sh
+
+report:
+	@echo "Uploading report"
+	@sh $(SCRIPT_DIR)/remote/run-rp.sh

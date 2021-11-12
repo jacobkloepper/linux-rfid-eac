@@ -1,0 +1,2 @@
+Add this line to the user crontab file (run "crontab -e"):
+0 0 * * * cd /home/pi/source/repos/linux-rfid-eac/ && make upload
