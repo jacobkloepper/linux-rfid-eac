@@ -3,8 +3,12 @@ Host controller for an RFID logging system. Log key-ins, collect logs on local d
 
 Intended to be run on a raspberry pi with arduinos connected via usb.
 
+# Installation
+The only installation required is to edit a user's crontab to schedule daily log uploads. This can be done manually or by running `make install` from the project root.
+This `make` target simply runs [`tool/sys/cron_setup.sh`](tool/sys/cron_setup.sh).
+
 # Use
-Host must be a linux machine with gcc.
+Host should be a linux machine. Program *should* be POSIX-compliant everywhere, but I make no guarantees.
 The serial ports are configued by a script assuming they take the name `/dev/ttyACMx` like usb-connected arduinos.
 
 If another, more attractive setup should become apparent, this interface should be easy to edit.
@@ -23,6 +27,9 @@ Contains a log `.csv` which is updated on every key-in.
 
 Currently, upload logs to remote by calling `make upload`. This should be done after every key-in.
 
+## firmware
+* [`reader.ino`](firmware/reader.ino) is programmed onto the arduinos. `many_readers.ino` was an attempt to set up an i2c bus to have many readers on a single arduino, but the reader-per-port approach is preferable for asynchronous use.
+
 ## src
 * [`main.c`](src/main.c) sets up states and signal handlers. Calles `open_com(ports)` which spawns threads to handle incoming data asynchronously.
 * [`portio.c`](src/portio.c) handles the ports, for example setting them up, reading, error handling, and closing.
@@ -31,4 +38,5 @@ Currently, upload logs to remote by calling `make upload`. This should be done a
 ## Tools
 * [`google`](tool/google/) contains google api auth used by following tools.
 * [`remote`](tool/remote/) contains scripts to upload logs and download user files from remote.
+* [`sys`](tool/sys/) contains scripts to interface with the os.
 * [`umod`](tool/umod/) contains a script to update the user file and upload it to remote.
