@@ -38,7 +38,7 @@ clean:
 
 setup:
 	@echo "Configuring ports"
-	@sh $(SCRIPT_DIR)/sys/setup.sh
+	@sh $(SCRIPT_DIR)/sys/tty_setup.sh
 
 upload:
 	@echo "Uploading log"
