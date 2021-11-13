@@ -19,12 +19,11 @@
         extern STATES STATE;
 */
 
-#define MAX_PORTS (7)
 sem_t mutex;
 sem_t datamutex;
 
 // dynamic assignments
-char ALL_PORTS[MAX_PORTS][15] = {"/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2"};
+char ALL_PORTS[MAX_PORTS][15] = {"/dev/ttyACM0", "/dev/ttyACM1", "/dev/ttyACM2", "/dev/ttyACM3", "/dev/ttyACM4", "/dev/ttyACM5", "/dev/ttyACM6"};
 pthread_t ALL_THREADS[NUM_PORTS] = {0};
 
 // read from ports, get uint uid val
