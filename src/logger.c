@@ -1,3 +1,14 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// logger.c
+//
+//  purpose: set of functions to parse passed data, compare with db, and prettily print to a log.
+//  main function: update_log(1)
+//  most other functions are parser and file io helpers.
+//  also contains some wrappers to run the python scripts in tool/remote/
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "common.h"
 #include "logger.h"
 
@@ -56,6 +67,9 @@ void update_report() {
     }
 }
 
+// a thread function ptr so uploads (takes ~5s) can be async.
+// TODO: mutex the pthread_create() calls. If too many uploads are triggered, overwhelms CPU.
+//       is fine in practice using ~6-8 thread calls, but there should be an upper limit (probably 3-4)
 void* rp_thread() {
     DBPRINT printf("UPDATE: Uploading new report\n");
     FILE* up_p = popen("sh tool/remote/wrappers/run-rp.sh", "r");
@@ -64,6 +78,7 @@ void* rp_thread() {
     return NULL;
 }
 
+// given a UID, fill obuf with the name mapped in the user data file.
 // char* obuf is a char array of size MAX_NAME_LENGTH
 void map_uid_to_name(uid UID, char* obuf) {
     int SUCCEEDED = 0;
@@ -106,6 +121,8 @@ void map_uid_to_name(uid UID, char* obuf) {
     } 
 }
 
+// given the direction byte of the payload, fill obuf with the appropriate string
+// obuf is a char array of size MAX_DIR_LENGTH
 void set_dir(uint8_t DIRECTION, char* obuf) {
     if (DIRECTION == 1) {
         strncpy(obuf, "in", MAX_DIR_LENGTH);
@@ -181,6 +198,8 @@ unsigned int get_lognum() {
     return lognum;
 }
 
+// wrapper around fcpy(2), fclear(1), and get_lognum(0)
+// used to buffer a log and replace the working log
 void buffer_log() {
     char buf_fn[50];
 

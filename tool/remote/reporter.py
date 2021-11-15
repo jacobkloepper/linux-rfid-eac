@@ -1,3 +1,13 @@
+#####################################################
+#
+# reporter.py
+#
+#  purpose: parse log file into report file, upload.
+#  uses pydrive wrapper for Google Drive API
+#
+#####################################################
+
+
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 import csv

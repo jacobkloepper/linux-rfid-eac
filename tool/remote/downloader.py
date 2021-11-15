@@ -1,8 +1,11 @@
-# NB, I pretty much just followed google and pydrive api tutorials.
+######################################################################################
 #
-# Uploads a file at ../../logs/log.csv to the google drive of the user in creds.txt
-#   to set up creds on first time, need to input data in web browser.
-#   TODO: I don't know when or why or even if the creds expire.
+# downloader.py
+#
+#  purpose: download a new user file
+#  called from the main loop if it detects a dummy file data/new.
+#
+######################################################################################
 
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
