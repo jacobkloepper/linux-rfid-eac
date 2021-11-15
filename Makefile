@@ -42,7 +42,7 @@ setup:
 
 upload:
 	@echo "Uploading log"
-	@sh $(SCRIPT_DIR)/remote/run-ul.sh
+	@sh $(SCRIPT_DIR)/remote/wrappers/run-ul.sh
 
 umod:
 	@echo "Starting usermod"
@@ -50,4 +50,4 @@ umod:
 
 report:
 	@echo "Uploading report"
-	@sh $(SCRIPT_DIR)/remote/run-rp.sh
+	@sh $(SCRIPT_DIR)/remote/wrappers/run-rp.sh

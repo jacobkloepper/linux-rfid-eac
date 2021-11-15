@@ -34,7 +34,7 @@ void set_nl_to_null(char* cstr) {
 // data/new is deleted at the end of this func.
 void update_userfile() {
     DBPRINT printf("UPDATE: Downloading user file\n");
-    FILE* dl_p = popen("sh tool/remote/run-dl.sh", "r");
+    FILE* dl_p = popen("sh tool/remote/wrappers/run-dl.sh", "r");
     pclose(dl_p);
 
     // delete new file
@@ -58,7 +58,7 @@ void update_report() {
 
 void* rp_thread() {
     DBPRINT printf("UPDATE: Uploading new report\n");
-    FILE* up_p = popen("sh tool/remote/run-rp.sh", "r");
+    FILE* up_p = popen("sh tool/remote/wrappers/run-rp.sh", "r");
     pclose(up_p);
     DBPRINT printf("UPDATE: Uploaded new report\n");
     return NULL;
