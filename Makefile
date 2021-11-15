@@ -13,7 +13,7 @@ SOURCES = $(wildcard $(SOURCE_DIR)/*.c)
 OBJECTS = $(subst $(SOURCE_DIR),$(BUILD_DIR),$(SOURCES:.c=.o))
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 
-.PHONY: all run clean setup upload umod report
+.PHONY: all makedirs run clean setup upload umod report
 
 all: setup makedirs $(TARGET) run
 
