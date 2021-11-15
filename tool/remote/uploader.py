@@ -12,6 +12,8 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from datetime import datetime
 
+from gdrive_ids import LOG_FOLDER_ID
+
 filename = "log"
 filepath = "../../logs/" + filename + ".csv"
 time_str = datetime.now().strftime("%Y-%m-%d--%H-%M-%S")
@@ -34,6 +36,6 @@ drive = GoogleDrive(gauth)
 
 # upload into folder in google drive.
 # if creating a new drive or folder to upload to, need to get the new folder id as below.
-file = drive.CreateFile({'title':upload_file,'parents':[{'id': '1IyhxkZgba7VCs7q6yzp1-aQXpjCgVM9F'}]})
+file = drive.CreateFile({'title':upload_file,'parents':[{'id': f'{LOG_FOLDER_ID}'}]})
 file.SetContentFile(filepath)
 file.Upload()

@@ -10,6 +10,8 @@
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 
+from gdrive_ids import USER_FOLDER_ID
+
 filename = "users"
 filepath = "../../data/" + filename + ".csv"
 
@@ -30,7 +32,7 @@ gauth.SaveCredentialsFile("../google/creds.txt")
 drive = GoogleDrive(gauth)
 
 # test
-file_list = drive.ListFile({'q': "'140syaUz8WLdJvehzuR38F8L2TSigQZBU' in parents and trashed=false"}).GetList()
+file_list = drive.ListFile({'q': f"'{USER_FOLDER_ID}' in parents and trashed=false"}).GetList()
 
 for file in file_list:
     file.GetContentFile(file['title'])

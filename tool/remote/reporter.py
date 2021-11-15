@@ -13,6 +13,8 @@ from pydrive.drive import GoogleDrive
 import csv
 from datetime import date
 
+from gdrive_ids import REPORT_FOLDER_ID
+
 ## NOTE: 
 ##   Only considers one in/out pair.
 ##   As it stands, will report the first "in" and last "out" in a day
@@ -97,7 +99,7 @@ upload_file = datestr
 
 # Check drive if filename already exists. If it does, extract its id
 upload_id = None
-file_list = drive.ListFile({'q':"'18mDYLQSFrF0SlVmw7o54BjxSQuFVy9Ya' in parents and trashed=False"}).GetList()
+file_list = drive.ListFile({'q':f"'{REPORT_FOLDER_ID}' in parents and trashed=False"}).GetList()
 # get all copies of day's report
 for file_itr in file_list:
     if file_itr['title'] == upload_file:
@@ -105,9 +107,9 @@ for file_itr in file_list:
 
 # if file already in drive, reupload with new data. otherwise upload file
 if (upload_id is not None):
-    file = drive.CreateFile({'id':upload_id, 'parents':[{'id':'18mDYLQSFrF0SlVmw7o54BjxSQuFVy9Ya'}]})
+    file = drive.CreateFile({'id':upload_id, 'parents':[{'id':f'{REPORT_FOLDER_ID}'}]})
 else:
-    file = drive.CreateFile({'title':upload_file, 'parents':[{'id':'18mDYLQSFrF0SlVmw7o54BjxSQuFVy9Ya'}]})
+    file = drive.CreateFile({'title':upload_file, 'parents':[{'id':f'{REPORT_FOLDER_ID}'}]})
 
 file.SetContentFile("report.csv")
 file.Upload()
