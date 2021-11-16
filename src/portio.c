@@ -195,7 +195,7 @@ void open_com(PORT* ports) {
 
 void close_com() {
     // program gets here after SIGINT sent (therefore reads done)
-    DBPRINT printf("UPDATE: destroying mutex\n");
+    DBPRINT printf("UPDATE: destroying mutexes\n");
     sem_destroy(&mutex);
     sem_destroy(&datamutex);
 }

@@ -15,6 +15,32 @@ from datetime import date
 
 from gdrive_ids import REPORT_FOLDER_ID
 
+############################################
+def get_up_file(drive):
+    # Check drive if filename already exists. If it does, extract its id
+    upload_id = None
+    file_list = drive.ListFile({'q':f"'{REPORT_FOLDER_ID}' in parents and trashed=False"}).GetList()
+    # get all copies of day's report
+    today_list = [file_itr for file_itr in file_list if file_itr['title'] == upload_file]
+
+    # if dupes, delete all but one copy; extract the survivor's
+    if (len(today_list) > 1):
+        for i in range(len(today_list)-1):
+            today_list[i].Delete()
+        upload_id = today_list[len(today_list)-1]['id']
+
+    # if one copy, get its ID
+    if (len(today_list) == 1):
+        upload_id = today_list[0]['id']
+
+    # if file already in drive, reupload with new data. otherwise upload file
+    if (upload_id is not None):
+        return drive.CreateFile({'id':upload_id, 'parents':[{'id':f'{REPORT_FOLDER_ID}'}]})
+    else:
+        return drive.CreateFile({'title':upload_file, 'parents':[{'id':f'{REPORT_FOLDER_ID}'}]})
+
+#######################################
+
 ## NOTE: 
 ##   Only considers one in/out pair.
 ##   As it stands, will report the first "in" and last "out" in a day
@@ -97,19 +123,12 @@ drive = GoogleDrive(gauth)
 # Upload to remote
 upload_file = datestr
 
-# Check drive if filename already exists. If it does, extract its id
-upload_id = None
-file_list = drive.ListFile({'q':f"'{REPORT_FOLDER_ID}' in parents and trashed=False"}).GetList()
-# get all copies of day's report
-for file_itr in file_list:
-    if file_itr['title'] == upload_file:
-        upload_id = file_itr['id']
+up_file = get_up_file(drive)
 
-# if file already in drive, reupload with new data. otherwise upload file
-if (upload_id is not None):
-    file = drive.CreateFile({'id':upload_id, 'parents':[{'id':f'{REPORT_FOLDER_ID}'}]})
-else:
-    file = drive.CreateFile({'title':upload_file, 'parents':[{'id':f'{REPORT_FOLDER_ID}'}]})
 
-file.SetContentFile("report.csv")
-file.Upload()
+up_file.SetContentFile("report.csv")
+try:
+    up_file.Upload()
+except:
+    up_file = get_up_file(drive)
+    up_file.Upload()

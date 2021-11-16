@@ -53,18 +53,19 @@ void update_userfile() {
     pclose(rm_p);
 
     // TODO: check conds on popen?
-
 }
 
 // run python script to generate and upload report to google drive.
 // func called on each log update.
+//   mutex introduced to block on first run each day
+//   checks existence of file that is created by crontab at midnight
 void update_report() {
-    if (DBREPORT) {
-        pthread_t th;
-        pthread_create(&th, NULL, rp_thread, NULL);
-    } else {
+    if (!DBREPORT) {
         printf("UPDATE: Skipping report upload\n");
+        return;
     }
+    pthread_t th;
+    pthread_create(&th, NULL, rp_thread, NULL);
 }
 
 // a thread function ptr so uploads (takes ~5s) can be async.
