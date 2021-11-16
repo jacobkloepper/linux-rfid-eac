@@ -31,7 +31,7 @@ Currently, upload logs to remote by calling `make upload`. This should be done a
 * [`reader.ino`](firmware/reader.ino) is programmed onto the arduinos. `many_readers.ino` was an attempt to set up an i2c bus to have many readers on a single arduino, but the reader-per-port approach is preferable for asynchronous use.
 
 ## src
-* [`main.c`](src/main.c) sets up states and signal handlers. Calles `open_com(ports)` which spawns threads to handle incoming data asynchronously.
+* [`main.c`](src/main.c) sets up states and signal handlers. Calls `open_com(ports)` which spawns threads to handle incoming data asynchronously.
 * [`portio.c`](src/portio.c) handles the ports, for example setting them up, reading, error handling, and closing.
 * [`logger.c`](src/logger.c) handles logging, including access of user file to pair users and UIDs.
 
