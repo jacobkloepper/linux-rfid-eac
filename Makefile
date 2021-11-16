@@ -13,7 +13,7 @@ SOURCES = $(wildcard $(SOURCE_DIR)/*.c)
 OBJECTS = $(subst $(SOURCE_DIR),$(BUILD_DIR),$(SOURCES:.c=.o))
 HEADERS = $(wildcard $(INCLUDE_DIR)/*.h)
 
-.PHONY: all makedirs run clean setup upload umod report
+.PHONY: all makedirs run clean setup upload umod report install
 
 all: setup makedirs $(TARGET) run
 
@@ -51,3 +51,7 @@ umod:
 report:
 	@echo "Uploading report"
 	@sh $(SCRIPT_DIR)/remote/wrappers/run-rp.sh
+
+install:
+	@echo "Installing"
+	@bash $(SCRIPT_DIR)/sys/cron_setup.sh

@@ -51,8 +51,6 @@ void update_userfile() {
     // delete new file
     FILE* rm_p = popen("rm  data/new", "r");
     pclose(rm_p);
-
-    // TODO: check conds on popen?
 }
 
 // run python script to generate and upload report to google drive.
@@ -69,8 +67,6 @@ void update_report() {
 }
 
 // a thread function ptr so uploads (takes ~5s) can be async.
-// TODO: mutex the pthread_create() calls. If too many uploads are triggered, overwhelms CPU.
-//       is fine in practice using ~6-8 thread calls, but there should be an upper limit (probably 3-4)
 void* rp_thread() {
     DBPRINT printf("UPDATE: Uploading new report\n");
     FILE* up_p = popen("sh tool/remote/wrappers/run-rp.sh", "r");
@@ -181,17 +177,22 @@ unsigned int get_lognum() {
 
     const char* fn_cache = "logs/cache";
     FILE* fcache = fopen(fn_cache, "r");
+
+    // If opens fail, report it and return 0 (no optimization, still works)
     if (fcache == NULL) {
         printf("-ERROR: Could not open cache for reads\n");
-        // TODO: do some handling instead of crashing
-        exit(1);
+        system("mkdir -p errlog/;touch errlog/log_cache_open_read_fail;echo `date` >> errlog/log_cache_open_read_fail");
+        return 0;
     }
+
     fscanf(fcache, "%u", &lognum);
     freopen(fn_cache, "w", fcache);
+
+    // If opens fail, report it and return 0 (no optimization, still works)
     if (fcache == NULL) {
         printf("-ERROR: Could not open cache for writes\n");
-        // TODO: do some handling instead of crashing
-        exit(1);
+        system("mkdir -p errlog/;touch errlog/log_cache_open_write_fail;echo `date` >> errlog/log_cache_open_write_fail");
+        return 0;
     }
     fprintf(fcache, "%u", lognum+1);
     fclose(fcache);
