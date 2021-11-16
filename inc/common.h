@@ -4,7 +4,7 @@
 // ARGUMENTS
 #define NUM_PORTS (2)                       // number of /dev/ttyACMx ports used
 #define DEBUG (0 || DEBUGV)                 // regular db mode (db printfs)
-#define DEBUGV (0)                          // verbose db mode (extra db printfs)
+#define DEBUGV (1)                          // verbose db mode (extra db printfs)
 #define DBREPORT (1)                        // 0: do not upload. 1: do upload.
 #define LOGFILE ("logs/log.csv")            // path from project root to log file
 #define USERFILE ("data/users.csv")         // path from project root to user data file

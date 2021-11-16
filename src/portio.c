@@ -138,7 +138,6 @@ payload read_port(PORT serial_port) {
 }
 
 // ASYNC
-// TODO: dynamic paths
 void get_new_userfile() {
     sem_wait(&datamutex);
     if (access("data/new", F_OK) == 0) {
