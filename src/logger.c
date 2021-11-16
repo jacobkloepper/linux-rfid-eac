@@ -178,7 +178,7 @@ void fclear(const char* fn) {
 unsigned int get_lognum() {
     unsigned int lognum = 0;
 
-    const char* fn_cache = "logs/cache.txt";
+    const char* fn_cache = "logs/cache";
     FILE* fcache = fopen(fn_cache, "r");
     if (fcache == NULL) {
         printf("-ERROR: Could not open cache for reads\n");
