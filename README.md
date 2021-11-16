@@ -25,7 +25,7 @@ Also, contains a blank file `new` when a new user file is uploaded to remote. On
 ## logs
 Contains a log `.csv` which is updated on every key-in.
 
-Currently, upload logs to remote by calling `make upload`. This should be done after every key-in.
+This log is parsed and uploaded as a report on each log update. The scripts in `tool/google/` and `tool/remote/` are set up to control the uploads to a configurable Google Drive. Configuration details are in `tool/google/`.
 
 ## firmware
 * [`reader.ino`](firmware/reader.ino) is programmed onto the arduinos. `many_readers.ino` was an attempt to set up an i2c bus to have many readers on a single arduino, but the reader-per-port approach is preferable for asynchronous use.
@@ -37,6 +37,6 @@ Currently, upload logs to remote by calling `make upload`. This should be done a
 
 ## Tools
 * [`google`](tool/google/) contains google api auth used by following tools.
-* [`remote`](tool/remote/) contains scripts to upload logs and download user files from remote.
+* [`remote`](tool/remote/) contains scripts to upload logs and reports, and download user files from remote.
 * [`sys`](tool/sys/) contains scripts to interface with the os.
 * [`umod`](tool/umod/) contains a script to update the user file and upload it to remote.
