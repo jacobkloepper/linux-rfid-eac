@@ -7,6 +7,8 @@ Intended to be run on a raspberry pi with arduinos connected via usb.
 The only installation required is to edit a user's crontab to schedule daily log uploads. This can be done manually or by running `make install` from the project root.
 This `make` target simply runs [`tool/sys/cron_setup.sh`](tool/sys/cron_setup.sh).
 
+Alternatively, this can be skipped and log files can be manually uploaded or ignored.
+
 # Use
 Host should be a linux machine. Program *should* be POSIX-compliant everywhere, but I make no guarantees.
 The serial ports are configued by a script assuming they take the name `/dev/ttyACMx` like usb-connected arduinos.
